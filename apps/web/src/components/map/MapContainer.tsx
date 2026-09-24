@@ -3,7 +3,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import * as maplibregl from 'maplibre-gl';
 import { StationMetadata } from '@aquaguard/shared-types';
-import { Play, Pause, RotateCcw, Layers, MapPin, Eye, ExternalLink } from 'lucide-react';
+import { Play, Pause, RotateCcw, MapPin } from 'lucide-react';
 import { RiskBadge } from '@/components/ui/RiskBadge';
 
 interface MapContainerProps {

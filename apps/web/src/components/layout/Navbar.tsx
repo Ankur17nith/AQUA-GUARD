@@ -2,16 +2,10 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
 import { 
-  Activity, 
-  Radio, 
   RotateCcw, 
   Zap, 
-  ShieldCheck, 
-  HelpCircle,
-  Menu,
-  X
+  ShieldCheck 
 } from 'lucide-react';
 
 interface NavbarProps {
@@ -20,9 +14,7 @@ interface NavbarProps {
 }
 
 export function Navbar({ onTriggerDemoEvent, onResetDemo }: NavbarProps) {
-  const pathname = usePathname();
   const [isDemoRunning, setIsDemoRunning] = useState(false);
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const handleRunEvent = () => {
     setIsDemoRunning(true);

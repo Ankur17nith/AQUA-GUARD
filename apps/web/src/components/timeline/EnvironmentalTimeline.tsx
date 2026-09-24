@@ -10,8 +10,6 @@ interface EnvironmentalTimelineProps {
 }
 
 export function EnvironmentalTimeline({
-  observations = [],
-  forecast = [],
   className = ''
 }: EnvironmentalTimelineProps) {
   // Generate unified chronological points (past 24-48h + forecast 14d)

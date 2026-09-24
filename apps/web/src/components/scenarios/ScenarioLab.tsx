@@ -1,8 +1,8 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Cpu, RotateCcw, Play, CheckCircle2, AlertTriangle, ShieldCheck } from 'lucide-react';
-import { ScenarioSimulationRequest, ScenarioSimulationResult } from '@aquaguard/shared-types';
+import { Cpu, Play, ShieldCheck } from 'lucide-react';
+import { ScenarioSimulationResult } from '@aquaguard/shared-types';
 import { api } from '@/lib/api';
 
 export function ScenarioLab() {
@@ -63,7 +63,7 @@ export function ScenarioLab() {
         stationId: 62
       });
       setResult(res);
-    } catch (e) {
+    } catch {
       // Offline fallback computation
       const curDr = 78.4;
       const projDr = Math.min(98, Math.round(curDr + Math.abs(rainfallDelta) * 0.35 + temperatureDelta * 4.0));

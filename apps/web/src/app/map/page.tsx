@@ -5,7 +5,7 @@ import { useQuery } from '@tanstack/react-query';
 import { api } from '@/lib/api';
 import { fallbackStations } from '@/lib/demoData';
 import { MapContainer } from '@/components/map/MapContainer';
-import { MapPin, Info, Layers, Compass } from 'lucide-react';
+import { MapPin } from 'lucide-react';
 
 export default function MapPage() {
   const [selectedStationId, setSelectedStationId] = useState<number>(62);
@@ -27,8 +27,13 @@ export default function MapPage() {
               National Geospatial Risk & Sensor Network
             </h1>
             <span className="text-[10px] px-2 py-0.5 rounded bg-cyan-950 text-cyan-300 border border-cyan-800">
-              69 Stations
+              {stations.length} Stations
             </span>
+            {selectedStation && (
+              <span className="text-[10px] px-2 py-0.5 rounded bg-slate-800 text-slate-300 border border-slate-700">
+                Active: {selectedStation.name}
+              </span>
+            )}
           </div>
           <p className="text-xs text-slate-400 mt-1 font-sans">
             Interactive multi-station environmental observatory across Kenya. Click any pin to inspect microclimate telemetry.

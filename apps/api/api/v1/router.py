@@ -87,7 +87,7 @@ async def get_station_digital_twin(station_id: int):
         "recommended_actions": actions,
         "active_alerts": alerts,
         "twin_status": "ACTIVE_SYNCHRONIZED",
-        "generated_at": datetime.datetime.utcnow().isoformat() + "Z"
+        "generated_at": datetime.datetime.now(datetime.timezone.utc).isoformat()
     }
 
 # -------------------------------------------------------------
@@ -189,6 +189,7 @@ async def get_forecast(station_id: int = Query(62)):
 # -------------------------------------------------------------
 _scenario_cache = {}
 
+@api_router.post("/scenarios/simulate", response_model=ScenarioResultSchema)
 @api_router.post("/scenarios", response_model=ScenarioResultSchema)
 async def run_scenario(req: ScenarioRequestSchema):
     adapter = get_conduit_adapter()
@@ -304,7 +305,7 @@ async def get_system_health():
         "ml_engine": "READY",
         "mode": settings.AQUAGUARD_MODE,
         "version": settings.VERSION,
-        "timestamp": datetime.datetime.utcnow().isoformat() + "Z"
+        "timestamp": datetime.datetime.now(datetime.timezone.utc).isoformat()
     }
 
 @api_router.post("/system/mode")

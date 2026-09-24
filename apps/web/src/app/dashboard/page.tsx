@@ -9,8 +9,7 @@ import {
   fallbackEnvironment,
   fallbackRisks,
   fallbackActions,
-  fallbackAlerts,
-  fallbackDataHealth
+  fallbackAlerts
 } from '@/lib/demoData';
 import { MetricCard } from '@/components/ui/MetricCard';
 import { RiskCard } from '@/components/ui/RiskCard';
@@ -20,15 +19,9 @@ import { MapContainer } from '@/components/map/MapContainer';
 import { 
   AlertTriangle, 
   ArrowRight, 
-  Droplets, 
-  Thermometer, 
-  Wind, 
-  Sun, 
-  ShieldCheck, 
   Cpu, 
-  CheckCircle2,
   ExternalLink,
-  Activity
+  Bell
 } from 'lucide-react';
 
 export default function DashboardPage() {
@@ -79,9 +72,17 @@ export default function DashboardPage() {
           </p>
         </div>
 
-        {/* Station Dropdown */}
-        <div className="flex items-center gap-2">
-          <span className="text-xs text-slate-400">Monitoring Station:</span>
+        {/* Station Dropdown & Alerts */}
+        <div className="flex items-center gap-3">
+          <Link
+            href="/alerts"
+            className="flex items-center gap-1.5 px-2.5 py-1 rounded bg-red-950/60 border border-red-800 text-[11px] text-red-300 hover:bg-red-900/60 transition-colors"
+          >
+            <Bell className="w-3 h-3 text-red-400 animate-pulse" />
+            <span>{alerts.filter((a) => a.status === 'ACTIVE').length} ALERTS</span>
+          </Link>
+
+          <span className="text-xs text-slate-400">Station:</span>
           <select
             value={stationId}
             onChange={(e) => setStationId(Number(e.target.value))}

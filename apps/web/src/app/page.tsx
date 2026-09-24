@@ -2,15 +2,7 @@ import React from 'react';
 import Link from 'next/link';
 import { 
   ArrowRight, 
-  Activity, 
-  Cpu, 
-  CheckCircle2, 
-  ShieldCheck, 
-  Database, 
-  Layers, 
-  MapPin, 
-  Sparkles,
-  Zap
+  Cpu
 } from 'lucide-react';
 
 export default function LandingPage() {
@@ -33,7 +25,7 @@ export default function LandingPage() {
         </div>
 
         <h1 className="text-4xl sm:text-6xl font-black tracking-tight text-slate-100 max-w-4xl mx-auto leading-tight">
-          AQUA<span className="text-cyan-400">//</span>GUARD
+          AQUA<span className="text-cyan-400">{"//"}</span>GUARD
         </h1>
 
         <p className="text-lg sm:text-xl font-bold text-slate-300 max-w-2xl mx-auto font-sans">

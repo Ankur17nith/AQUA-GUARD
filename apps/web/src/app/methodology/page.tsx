@@ -1,5 +1,5 @@
 import React from 'react';
-import { BookOpen, Sigma, ShieldCheck, Cpu } from 'lucide-react';
+import { BookOpen, Sigma, Cpu } from 'lucide-react';
 
 export default function MethodologyPage() {
   return (

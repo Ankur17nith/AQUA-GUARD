@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Bot, Send, User, ShieldCheck, Sparkles, ExternalLink, Terminal } from 'lucide-react';
+import { Bot, Send, User, Terminal } from 'lucide-react';
 import { api } from '@/lib/api';
 
 interface Message {
@@ -59,7 +59,7 @@ export function CopilotChat() {
         timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
       };
       setMessages((prev) => [...prev, botMsg]);
-    } catch (err) {
+    } catch {
       // Offline fallback grounded response
       const fallbackAnswer = textToSend.toLowerCase().includes('why')
         ? "Drought risk at **Conduit@Empathy (JKUAT)** is currently **HIGH (78.4%)**.\n\n### Verified Evidence:\n• **Rainfall Deficit**: 0.0 mm precipitation recorded by dual tipping-bucket gauges.\n• **Soil Moisture**: 19.5% (-41.8% vs seasonal baseline).\n• **Thermal Surge**: +8.3°C above baseline accelerates atmospheric vapor deficit.\n\nConfidence: 84%."

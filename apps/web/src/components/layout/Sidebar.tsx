@@ -15,10 +15,7 @@ import {
   Database,
   Layers,
   BookOpen,
-  Settings,
-  Flame,
-  Droplets,
-  Activity
+  Settings
 } from 'lucide-react';
 
 const NAV_ITEMS = [

@@ -3,23 +3,18 @@
 import React, { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { api } from '@/lib/api';
-import { fallbackRisks, fallbackForecast } from '@/lib/demoData';
+import { fallbackRisks } from '@/lib/demoData';
 import { RiskBadge } from '@/components/ui/RiskBadge';
-import { AlertTriangle, ShieldCheck, HelpCircle, Layers, ArrowRight } from 'lucide-react';
+import { AlertTriangle, ShieldCheck, ArrowRight } from 'lucide-react';
 import Link from 'next/link';
 
 export default function RiskPage() {
-  const [stationId, setStationId] = useState(62);
+  const stationId = 62;
   const [activeCategory, setActiveCategory] = useState<'DROUGHT' | 'WATER_STRESS' | 'HEAT' | 'FLOOD'>('DROUGHT');
 
   const { data: risks = fallbackRisks } = useQuery({
     queryKey: ['risks', stationId],
     queryFn: () => api.getCurrentRisks(stationId)
-  });
-
-  const { data: forecast = fallbackForecast } = useQuery({
-    queryKey: ['forecast', stationId],
-    queryFn: () => api.getForecast(stationId)
   });
 
   const currentRisk = risks.find((r) => r.category === activeCategory) || risks[0];

@@ -6,7 +6,7 @@ import { api } from '@/lib/api';
 import { fallbackAlerts } from '@/lib/demoData';
 import { AlertNotification } from '@aquaguard/shared-types';
 import { RiskBadge } from '@/components/ui/RiskBadge';
-import { Bell, CheckCircle2, Clock, ShieldAlert } from 'lucide-react';
+import { Bell, CheckCircle2 } from 'lucide-react';
 
 export default function AlertsPage() {
   const { data: initialAlerts = fallbackAlerts } = useQuery({
@@ -16,10 +16,10 @@ export default function AlertsPage() {
 
   const [alerts, setAlerts] = useState<AlertNotification[]>(initialAlerts);
 
-  const handleUpdateStatus = async (alertId: string, newStatus: any) => {
+  const handleUpdateStatus = async (alertId: string, newStatus: AlertNotification['status']) => {
     try {
       await api.updateAlertStatus(alertId, newStatus);
-    } catch (e) {
+    } catch {
       // offline fallback
     }
     setAlerts((prev) =>

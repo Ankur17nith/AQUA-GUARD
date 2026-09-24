@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { ActionRecommendation } from '@aquaguard/shared-types';
-import { CheckCircle2, Clock, AlertCircle, ShieldAlert, ArrowRight, Check } from 'lucide-react';
+import { CheckCircle2, Check } from 'lucide-react';
 
 interface ActionCenterProps {
   actions: ActionRecommendation[];

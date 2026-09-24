@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { RiskAssessment } from '@aquaguard/shared-types';
 import { RiskBadge } from './RiskBadge';
-import { ChevronDown, ChevronUp, AlertCircle, Sparkles } from 'lucide-react';
+import { ChevronDown, ChevronUp, AlertCircle } from 'lucide-react';
 
 interface RiskCardProps {
   risk: RiskAssessment;
@@ -68,7 +68,10 @@ export function RiskCard({ risk, onExplore, className = '' }: RiskCardProps) {
       {/* Why Explanation Toggle */}
       <div className="mt-3.5 pt-3 border-t border-slate-800/80">
         <button
-          onClick={() => setExpanded(!expanded)}
+          onClick={() => {
+            setExpanded(!expanded);
+            if (onExplore) onExplore();
+          }}
           className="flex items-center justify-between w-full text-xs font-mono text-cyan-400 hover:text-cyan-300 transition-colors cursor-pointer"
         >
           <span className="flex items-center gap-1 font-bold">

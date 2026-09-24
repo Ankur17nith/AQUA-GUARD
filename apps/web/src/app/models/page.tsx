@@ -1,5 +1,5 @@
 import React from 'react';
-import { Layers, ShieldCheck, CheckCircle2, AlertTriangle, FileText } from 'lucide-react';
+import { Layers, AlertTriangle } from 'lucide-react';
 
 export default function ModelsPage() {
   const metrics = [

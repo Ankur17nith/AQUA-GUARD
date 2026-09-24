@@ -4,7 +4,7 @@ import React from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { api } from '@/lib/api';
 import { fallbackDataHealth } from '@/lib/demoData';
-import { Database, ShieldCheck, CheckCircle2, Radio, Server, Layers } from 'lucide-react';
+import { Database } from 'lucide-react';
 
 export default function DataObservatoryPage() {
   const { data: health = fallbackDataHealth } = useQuery({

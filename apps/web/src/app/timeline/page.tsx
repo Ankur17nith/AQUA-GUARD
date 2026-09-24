@@ -48,7 +48,7 @@ export default function TimelinePage() {
           </div>
           <div className="p-3 rounded bg-slate-950 border border-slate-800">
             <strong className="text-red-300 block font-mono font-bold mb-1">3. Risk Escalation</strong>
-            As root-zone moisture drops below the 22% threshold, the model's compound water stress index escalates into the HIGH risk zone (78.4%).
+            As root-zone moisture drops below the 22% threshold, the model&apos;s compound water stress index escalates into the HIGH risk zone (78.4%).
           </div>
         </div>
       </div>

@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Settings, ShieldCheck, Server, Radio, RotateCcw, CheckCircle2 } from 'lucide-react';
+import { Settings, CheckCircle2 } from 'lucide-react';
 import { api } from '@/lib/api';
 
 export default function SettingsPage() {
@@ -15,7 +15,7 @@ export default function SettingsPage() {
     try {
       await api.setSystemMode(newMode);
       setStatusMessage(`Mode successfully switched to ${newMode}`);
-    } catch (e) {
+    } catch {
       setStatusMessage(`Mode set to ${newMode} (client side)`);
     } finally {
       setIsUpdating(false);
@@ -66,6 +66,7 @@ export default function SettingsPage() {
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <button
             onClick={() => handleToggleMode('DEMO')}
+            disabled={isUpdating}
             className={`p-4 rounded-lg border text-left cursor-pointer transition-all ${
               mode === 'DEMO'
                 ? 'border-cyan-500/80 bg-cyan-950/20 ring-1 ring-cyan-500/40'
@@ -83,6 +84,7 @@ export default function SettingsPage() {
 
           <button
             onClick={() => handleToggleMode('LIVE')}
+            disabled={isUpdating}
             className={`p-4 rounded-lg border text-left cursor-pointer transition-all ${
               mode === 'LIVE'
                 ? 'border-cyan-500/80 bg-cyan-950/20 ring-1 ring-cyan-500/40'
