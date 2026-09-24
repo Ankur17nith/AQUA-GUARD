@@ -1,0 +1,19 @@
+{
+  "name": "aquaguard-monorepo",
+  "private": true,
+  "description": "AQUA//GUARD - Climate Risk Intelligence, Digital Twin & Action Platform",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev:web": "npm --prefix apps/web run dev",
+    "build:web": "npm --prefix apps/web run build",
+    "lint:web": "npm --prefix apps/web run lint",
+    "test:api": ".venv/bin/pytest apps/api/tests",
+    "dev:api": ".venv/bin/uvicorn apps.api.main:app --reload --port 8000",
+    "seed": ".venv/bin/python3 scripts/seed.py",
+    "test": "npm --prefix apps/web run build && .venv/bin/pytest apps/api/tests"
+  },
+  "devDependencies": {}
+}

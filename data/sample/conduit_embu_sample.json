@@ -1,0 +1,340 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          37.45,
+          -0.5,
+          1493.0
+        ]
+      },
+      "properties": {
+        "project": "3D FEWSNET",
+        "affiliation": "NCAR/Research Applications Laboratory",
+        "doi": "https://doi.org/10.5065/d6v1236q",
+        "doi_citation": "https://citation.crosscite.org/?doi=10.5065/d6v1236q",
+        "chords_version": "1.1.0-rc7",
+        "chords_version_sha": "2d4f443",
+        "site": "Kenya Meteorological Department Embu",
+        "site_id": 12,
+        "instrument": "FEWSNET Kenya Embu MET",
+        "instrument_id": 11,
+        "sensor_id": "11",
+        "variables": [
+          {
+            "name": "Health",
+            "shortname": "hth",
+            "measured_property": "State Of Health",
+            "measured_property_definition": "Information regarding the operational capability of a system, and its components, indicating system status.",
+            "measured_property_source": "SensorML",
+            "measured_property_url": "http://sensorml.com/ont/swe/property/StateOfHealth",
+            "units_name": "count",
+            "units_abbreviation": "#",
+            "units_type": "Dimensionless",
+            "units_source": "CUAHSI"
+          },
+          {
+            "name": "Cell Signal Strength",
+            "shortname": "css",
+            "measured_property": "State Of Health",
+            "measured_property_definition": "Information regarding the operational capability of a system, and its components, indicating system status.",
+            "measured_property_source": "SensorML",
+            "measured_property_url": "http://sensorml.com/ont/swe/property/StateOfHealth",
+            "units_name": "percent",
+            "units_abbreviation": "%",
+            "units_type": "Dimensionless",
+            "units_source": "CUAHSI"
+          },
+          {
+            "name": "Charger Fault Register",
+            "shortname": "cfr",
+            "measured_property": "State Of Health",
+            "measured_property_definition": "Information regarding the operational capability of a system, and its components, indicating system status.",
+            "measured_property_source": "SensorML",
+            "measured_property_url": "http://sensorml.com/ont/swe/property/StateOfHealth",
+            "units_name": "count",
+            "units_abbreviation": "#",
+            "units_type": "Dimensionless",
+            "units_source": "CUAHSI"
+          },
+          {
+            "name": "Rain Gauge 1",
+            "shortname": "rg",
+            "measured_property": "Precipitation",
+            "measured_property_definition": "Any form of water particles-liquid or solid-that falls from the atmosphere and reaches the ground.",
+            "measured_property_source": "SensorML",
+            "measured_property_url": "http://sensorml.com/ont/swe/property/Precipitation",
+            "units_name": "millimeter",
+            "units_abbreviation": "mm",
+            "units_type": "Length",
+            "units_source": "CUAHSI"
+          },
+          {
+            "name": "Rain Gauge 2",
+            "shortname": "rg2",
+            "measured_property": "Precipitation",
+            "measured_property_definition": "Any form of water particles-liquid or solid-that falls from the atmosphere and reaches the ground.",
+            "measured_property_source": "SensorML",
+            "measured_property_url": "http://sensorml.com/ont/swe/property/Precipitation",
+            "units_name": "millimeter",
+            "units_abbreviation": "mm",
+            "units_type": "Length",
+            "units_source": "CUAHSI"
+          },
+          {
+            "name": "BMX Temperature 1",
+            "shortname": "bt1",
+            "measured_property": "Temperature",
+            "measured_property_definition": "Intensity of heat as measured on a definite scale.",
+            "measured_property_source": "SensorML",
+            "measured_property_url": "http://sensorml.com/ont/swe/property/Temperature",
+            "units_name": "degree celsius",
+            "units_abbreviation": "degC",
+            "units_type": "Temperature",
+            "units_source": "CUAHSI"
+          },
+          {
+            "name": "BMX Pressure 1",
+            "shortname": "bp1",
+            "measured_property": "Air Pressure Value",
+            "measured_property_definition": "The cumulative force exerted on any surface by the molecules composing air.",
+            "measured_property_source": "SensorML",
+            "measured_property_url": "http://sensorml.com/ont/swe/property/AirPressureValue",
+            "units_name": "hectopascal",
+            "units_abbreviation": "hPa",
+            "units_type": "Pressure/Stress",
+            "units_source": "CUAHSI"
+          },
+          {
+            "name": "SHT Humidity 1",
+            "shortname": "sh1",
+            "measured_property": "Humidity Value",
+            "measured_property_definition": "The amount of water vapor in the atmosphere.",
+            "measured_property_source": "SensorML",
+            "measured_property_url": "http://sensorml.com/ont/swe/property/HumidityValue",
+            "units_name": "percent",
+            "units_abbreviation": "%",
+            "units_type": "Dimensionless",
+            "units_source": "CUAHSI"
+          },
+          {
+            "name": "SHT Temperature 1",
+            "shortname": "st1",
+            "measured_property": "Temperature",
+            "measured_property_definition": "Intensity of heat as measured on a definite scale.",
+            "measured_property_source": "SensorML",
+            "measured_property_url": "http://sensorml.com/ont/swe/property/Temperature",
+            "units_name": "degree celsius",
+            "units_abbreviation": "degC",
+            "units_type": "Temperature",
+            "units_source": "CUAHSI"
+          },
+          {
+            "name": "MCP Temperature 1\t",
+            "shortname": "mt1",
+            "measured_property": "Temperature",
+            "measured_property_definition": "Intensity of heat as measured on a definite scale.",
+            "measured_property_source": "SensorML",
+            "measured_property_url": "http://sensorml.com/ont/swe/property/Temperature",
+            "units_name": "degree celsius",
+            "units_abbreviation": "degC",
+            "units_type": "Temperature",
+            "units_source": "CUAHSI"
+          },
+          {
+            "name": "Battery Current State",
+            "shortname": "bcs",
+            "measured_property": "State Of Health",
+            "measured_property_definition": "Information regarding the operational capability of a system, and its components, indicating system status.",
+            "measured_property_source": "SensorML",
+            "measured_property_url": "http://sensorml.com/ont/swe/property/StateOfHealth",
+            "units_name": "count",
+            "units_abbreviation": "#",
+            "units_type": "Dimensionless",
+            "units_source": "CUAHSI"
+          },
+          {
+            "name": "Battery Percent Charge",
+            "shortname": "bpc",
+            "measured_property": "State Of Health",
+            "measured_property_definition": "Information regarding the operational capability of a system, and its components, indicating system status.",
+            "measured_property_source": "SensorML",
+            "measured_property_url": "http://sensorml.com/ont/swe/property/StateOfHealth",
+            "units_name": "percent",
+            "units_abbreviation": "%",
+            "units_type": "Dimensionless",
+            "units_source": "CUAHSI"
+          },
+          {
+            "name": "Rain Gauge 1 Total Today",
+            "shortname": "rgt",
+            "measured_property": "Precipitation",
+            "measured_property_definition": "Any form of water particles-liquid or solid-that falls from the atmosphere and reaches the ground.",
+            "measured_property_source": "SensorML",
+            "measured_property_url": "http://sensorml.com/ont/swe/property/Precipitation",
+            "units_name": "millimeters per day",
+            "units_abbreviation": "mm/day",
+            "units_type": "velocity",
+            "units_source": "CUAHSI"
+          },
+          {
+            "name": "Rain Gauge 1 Total Prior",
+            "shortname": "rgp",
+            "measured_property": "Precipitation",
+            "measured_property_definition": "Any form of water particles-liquid or solid-that falls from the atmosphere and reaches the ground.",
+            "measured_property_source": "SensorML",
+            "measured_property_url": "http://sensorml.com/ont/swe/property/Precipitation",
+            "units_name": "millimeters per day",
+            "units_abbreviation": "mm/day",
+            "units_type": "velocity",
+            "units_source": "CUAHSI"
+          },
+          {
+            "name": "Rain Gauge 2 Total Today",
+            "shortname": "rgt2",
+            "measured_property": "Precipitation",
+            "measured_property_definition": "Any form of water particles-liquid or solid-that falls from the atmosphere and reaches the ground.",
+            "measured_property_source": "SensorML",
+            "measured_property_url": "http://sensorml.com/ont/swe/property/Precipitation",
+            "units_name": "millimeters per day",
+            "units_abbreviation": "mm/day",
+            "units_type": "velocity",
+            "units_source": "CUAHSI"
+          },
+          {
+            "name": "Rain Gauge 2 Total Prior",
+            "shortname": "rgp2",
+            "measured_property": "Precipitation",
+            "measured_property_definition": "Any form of water particles-liquid or solid-that falls from the atmosphere and reaches the ground.",
+            "measured_property_source": "SensorML",
+            "measured_property_url": "http://sensorml.com/ont/swe/property/Precipitation",
+            "units_name": "millimeters per day",
+            "units_abbreviation": "mm/day",
+            "units_type": "velocity",
+            "units_source": "CUAHSI"
+          },
+          {
+            "name": "Heat Index",
+            "shortname": "hi",
+            "measured_property": "Temperature Limits",
+            "measured_property_definition": "The minimum and maximum intensity of heat as measured on some definite temperature scale by means of any of various types of thermometers.",
+            "measured_property_source": "SensorML",
+            "measured_property_url": "http://sensorml.com/ont/swe/property/TemperatureLimits",
+            "units_name": "count",
+            "units_abbreviation": "#",
+            "units_type": "Dimensionless",
+            "units_source": "CUAHSI"
+          },
+          {
+            "name": "Wet Bulb Temperature",
+            "shortname": "wbt",
+            "measured_property": "Temperature",
+            "measured_property_definition": "Intensity of heat as measured on a definite scale.",
+            "measured_property_source": "SensorML",
+            "measured_property_url": "http://sensorml.com/ont/swe/property/Temperature",
+            "units_name": "degree celsius",
+            "units_abbreviation": "degC",
+            "units_type": "Temperature",
+            "units_source": "CUAHSI"
+          },
+          {
+            "name": "Wet Bulb Globe Temperature",
+            "shortname": "wbgt",
+            "measured_property": "Temperature",
+            "measured_property_definition": "Intensity of heat as measured on a definite scale.",
+            "measured_property_source": "SensorML",
+            "measured_property_url": "http://sensorml.com/ont/swe/property/Temperature",
+            "units_name": "degree celsius",
+            "units_abbreviation": "degC",
+            "units_type": "Temperature",
+            "units_source": "CUAHSI"
+          },
+          {
+            "name": "Wind Speed",
+            "shortname": "ws",
+            "measured_property": "Wind Speed",
+            "measured_property_definition": "The rate at which air is moving horizontally past a given point.",
+            "measured_property_source": "SensorML",
+            "measured_property_url": "http://sensorml.com/ont/swe/property/WindSpeed",
+            "units_name": "meters per second",
+            "units_abbreviation": "m/s",
+            "units_type": "Velocity",
+            "units_source": "CUAHSI"
+          },
+          {
+            "name": "Wind Gust",
+            "shortname": "wg",
+            "measured_property": "Wind Speed",
+            "measured_property_definition": "The rate at which air is moving horizontally past a given point.",
+            "measured_property_source": "SensorML",
+            "measured_property_url": "http://sensorml.com/ont/swe/property/WindSpeed",
+            "units_name": "meters per second",
+            "units_abbreviation": "m/s",
+            "units_type": "Velocity",
+            "units_source": "CUAHSI"
+          },
+          {
+            "name": "Wind Direction",
+            "shortname": "wd",
+            "measured_property": "Wind Direction Angle",
+            "measured_property_definition": "The angle from which the wind is blowing, clockwise from north (e.g. 270 is wind from west).",
+            "measured_property_source": "SensorML",
+            "measured_property_url": "http://sensorml.com/ont/swe/property/WindDirectionAngle",
+            "units_name": "degree",
+            "units_abbreviation": "deg",
+            "units_type": "Angle",
+            "units_source": "CUAHSI"
+          },
+          {
+            "name": "Wind Gust Direction",
+            "shortname": "wgd",
+            "measured_property": "Wind Direction Angle",
+            "measured_property_definition": "The angle from which the wind is blowing, clockwise from north (e.g. 270 is wind from west).",
+            "measured_property_source": "SensorML",
+            "measured_property_url": "http://sensorml.com/ont/swe/property/WindDirectionAngle",
+            "units_name": "degree",
+            "units_abbreviation": "deg",
+            "units_type": "Angle",
+            "units_source": "CUAHSI"
+          }
+        ],
+        "data": [
+          {
+            "time": "2026-09-24T11:37:50Z",
+            "test": "false",
+            "measurements": {
+              "hi": 29.7,
+              "rgp2": 0,
+              "rgt2": 0,
+              "rgp": 5129.4,
+              "rgt": 4663.4,
+              "bpc": 93.5,
+              "bcs": 3,
+              "mt1": 29.9,
+              "st1": 29.1,
+              "sh1": 41.7,
+              "bp1": 852.6,
+              "bt1": 29.7,
+              "rg2": 0,
+              "rg": 15.4,
+              "cfr": 0,
+              "css": 100,
+              "hth": 2,
+              "wgd": 138,
+              "wd": 118,
+              "wg": 2,
+              "ws": 1.1,
+              "wbgt": 23.2,
+              "wbt": 20.7
+            }
+          }
+        ],
+        "timestamps_in_feature": 1,
+        "measurements_in_feature": 23
+      }
+    }
+  ]
+}

@@ -1,0 +1,94 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgis/postgis:16-3.4
+    container_name: aquaguard-postgres
+    restart: always
+    environment:
+      POSTGRES_DB: aquaguard
+      POSTGRES_USER: aquaguard
+      POSTGRES_PASSWORD: aquaguard_secret
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U aquaguard"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    container_name: aquaguard-redis
+    restart: always
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  api:
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
+    container_name: aquaguard-api
+    restart: always
+    environment:
+      DATABASE_URL: postgresql+asyncpg://aquaguard:aquaguard_secret@postgres:5432/aquaguard
+      REDIS_URL: redis://redis:6379/0
+      AQUAGUARD_MODE: DEMO
+      CONDUIT_API_URL: https://3d-fewsnet.icdp.ucar.edu/api/v1/data/61.geojson
+      CONDUIT_API_KEY: 71VcHDXG-zo1ezcgxAts
+      CONDUIT_API_EMAIL: 3dpaws@meteo.go.ke
+      CONDUIT_STATION_ID: 61
+    ports:
+      - "8000:8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    command: >
+      sh -c "python3 scripts/seed.py &&
+             uvicorn apps.api.main:app --host 0.0.0.0 --port 8000"
+
+  worker:
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
+    container_name: aquaguard-worker
+    restart: always
+    environment:
+      DATABASE_URL: postgresql+asyncpg://aquaguard:aquaguard_secret@postgres:5432/aquaguard
+      REDIS_URL: redis://redis:6379/0
+      AQUAGUARD_MODE: DEMO
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    command: python3 -c "import time; print('AQUA//GUARD Background Worker listening for telemetry updates...'); time.sleep(999999)"
+
+  web:
+    build:
+      context: .
+      dockerfile: apps/web/Dockerfile
+    container_name: aquaguard-web
+    restart: always
+    environment:
+      NEXT_PUBLIC_API_URL: http://api:8000
+      PORT: 3000
+    ports:
+      - "3000:3000"
+    depends_on:
+      - api
+
+volumes:
+  postgres_data:
+  redis_data:
