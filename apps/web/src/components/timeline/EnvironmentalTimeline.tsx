@@ -1,8 +1,9 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import { CanonicalObservation, ForecastPoint } from '@aquaguard/shared-types';
 import { EnvironmentalEChart } from '@/components/charts/EnvironmentalEChart';
+import { Clock } from 'lucide-react';
 
 interface EnvironmentalTimelineProps {
   observations?: CanonicalObservation[];
@@ -13,7 +14,9 @@ interface EnvironmentalTimelineProps {
 export function EnvironmentalTimeline({
   className = ''
 }: EnvironmentalTimelineProps) {
-  // Generate unified chronological points (past 24-48h + forecast 14d)
+  const [activeWindow, setActiveWindow] = useState<'24H' | '7D' | '30D' | '90D'>('7D');
+
+  // Unified chronological steps across physical causality
   const timePoints = [
     { label: '-48h', rain: 0.0, temp: 24.2, sm: 26.5, ndvi: 0.44, risk: 45.0, type: 'OBSERVED' },
     { label: '-36h', rain: 0.0, temp: 26.8, sm: 24.8, ndvi: 0.43, risk: 52.0, type: 'OBSERVED' },
@@ -27,112 +30,117 @@ export function EnvironmentalTimeline({
   ];
 
   return (
-    <div className={`p-5 rounded-lg border border-slate-800 bg-slate-950 font-mono ${className}`}>
-      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-800 pb-3 mb-4">
+    <div className={`p-5 rounded border border-[rgba(255,255,255,0.08)] bg-[#111418] font-mono text-xs ${className}`}>
+      {/* Header with Window Selector */}
+      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[rgba(255,255,255,0.06)] pb-3 mb-4">
         <div>
-          <h3 className="text-sm font-bold uppercase tracking-wider text-slate-100 flex items-center gap-2">
+          <h2 className="text-sm font-bold uppercase tracking-wider text-[#F1F4F8] flex items-center gap-2">
+            <Clock className="w-4 h-4 text-[#06B6D4]" />
             <span>Synchronized Environmental Risk Timeline</span>
-            <span className="text-[10px] px-2 py-0.5 rounded bg-cyan-950 text-cyan-300 border border-cyan-800 font-normal">
-              PAST 48h → NOW → FORECAST 14d
-            </span>
-          </h3>
-          <p className="text-xs text-slate-400 mt-1 font-sans">
-            Demonstrating physical causality: Rainfall Deficit → Soil Desiccation → Thermal Evaporative Demand → Crop Stress → Risk Escalation.
+          </h2>
+          <p className="text-xs text-[#8E9BAE] mt-0.5 font-sans">
+            Demonstrating physical causality: Rainfall Deficit → Root-zone Soil Desiccation → Thermal Evaporative Demand → Risk Escalation.
           </p>
+        </div>
+
+        {/* Range Toggles (Requirement #21: 24H, 7D, 30D, 90D) */}
+        <div className="flex items-center gap-1 bg-[#15191F] p-0.5 rounded border border-[rgba(255,255,255,0.06)]">
+          {(['24H', '7D', '30D', '90D'] as const).map((win) => (
+            <button
+              key={win}
+              onClick={() => setActiveWindow(win)}
+              className={`px-2.5 py-1 rounded text-xs font-semibold cursor-pointer transition-colors ${
+                activeWindow === win
+                  ? 'bg-[rgba(6,182,212,0.15)] text-[#06B6D4] border border-[#06B6D4]/40'
+                  : 'text-[#8E9BAE] hover:text-[#F1F4F8]'
+              }`}
+            >
+              {win}
+            </button>
+          ))}
         </div>
       </div>
 
       {/* Apache ECharts Multi-Signal Interactive Series */}
-      <div className="mb-6 p-4 rounded-lg bg-slate-900/60 border border-slate-800">
-        <div className="text-xs font-bold uppercase text-slate-300 mb-2 flex items-center justify-between">
-          <span>Continuous Signal Correlation Overlay</span>
-          <span className="text-[10px] text-slate-400">Interactive: Zoom / Pan / Legend Toggle</span>
+      <div className="mb-5 p-3.5 rounded bg-[#15191F] border border-[rgba(255,255,255,0.06)]">
+        <div className="text-xs font-semibold text-[#8E9BAE] mb-2 flex items-center justify-between">
+          <span className="uppercase tracking-wider text-[11px]">Continuous Signal Correlation Overlay</span>
+          <span className="text-[10px] text-[#5C6777]">Interactive Zoom / Pan</span>
         </div>
-        <EnvironmentalEChart height={280} />
+        <EnvironmentalEChart height={270} />
       </div>
 
       {/* Synchronized Multi-Track Grid */}
-      <div className="space-y-4">
-        {/* Track 1: Rainfall (mm) */}
-        <div>
-          <div className="flex items-center justify-between text-xs mb-1">
-            <span className="text-cyan-400 font-bold">1. Precipitation (mm)</span>
-            <span className="text-slate-400 text-[11px]">Normal: 3.0 mm/day | Observed: 0.0 mm</span>
+      <div className="space-y-3.5">
+        {/* Track 1: Rainfall */}
+        <div className="space-y-1">
+          <div className="flex items-center justify-between text-[11px]">
+            <span className="text-[#06B6D4] font-semibold">1. Precipitation (mm)</span>
+            <span className="text-[#5C6777]">Observed: 0.0 mm | Baseline: 3.0 mm/day</span>
           </div>
           <div className="grid grid-cols-9 gap-1 text-center">
             {timePoints.map((pt, i) => (
-              <div key={i} className={`p-2 rounded border ${pt.label === 'NOW' ? 'bg-cyan-950/80 border-cyan-500/80 ring-2 ring-cyan-500/30' : 'bg-slate-900 border-slate-800'}`}>
-                <div className="text-[10px] text-slate-400">{pt.label}</div>
-                <div className="text-sm font-extrabold text-cyan-300 tabular-nums">{pt.rain}</div>
-                <div className="text-[9px] text-slate-400">mm</div>
+              <div
+                key={i}
+                className={`p-1.5 rounded border ${
+                  pt.label === 'NOW'
+                    ? 'bg-[rgba(6,182,212,0.12)] border-[#06B6D4]/60'
+                    : 'bg-[#15191F] border-[rgba(255,255,255,0.04)]'
+                }`}
+              >
+                <div className="text-[9.5px] text-[#5C6777]">{pt.label}</div>
+                <div className="text-xs font-bold text-[#06B6D4] tabular-nums mt-0.5">{pt.rain}</div>
+                <div className="text-[9px] text-[#5C6777]">mm</div>
               </div>
             ))}
           </div>
         </div>
 
-        {/* Track 2: Surface Temperature (°C) */}
-        <div>
-          <div className="flex items-center justify-between text-xs mb-1">
-            <span className="text-red-400 font-bold">2. Surface Temperature (°C)</span>
-            <span className="text-slate-400 text-[11px]">Baseline: 21.8°C | Diurnal Peak: +8.3°C</span>
+        {/* Track 2: Surface Temperature */}
+        <div className="space-y-1">
+          <div className="flex items-center justify-between text-[11px]">
+            <span className="text-[#F87171] font-semibold">2. Surface Temperature (°C)</span>
+            <span className="text-[#5C6777]">Peak: +8.3°C above diurnal normal</span>
           </div>
           <div className="grid grid-cols-9 gap-1 text-center">
             {timePoints.map((pt, i) => (
-              <div key={i} className={`p-2 rounded border ${pt.label === 'NOW' ? 'bg-red-950/80 border-red-500/80 ring-2 ring-red-500/30' : 'bg-slate-900 border-slate-800'}`}>
-                <div className="text-[10px] text-slate-400">{pt.label}</div>
-                <div className="text-sm font-extrabold text-red-300 tabular-nums">{pt.temp}°</div>
-                <div className="text-[9px] text-slate-400">°C</div>
+              <div
+                key={i}
+                className={`p-1.5 rounded border ${
+                  pt.label === 'NOW'
+                    ? 'bg-[rgba(239,68,68,0.12)] border-[#EF4444]/60'
+                    : 'bg-[#15191F] border-[rgba(255,255,255,0.04)]'
+                }`}
+              >
+                <div className="text-[9.5px] text-[#5C6777]">{pt.label}</div>
+                <div className="text-xs font-bold text-[#F87171] tabular-nums mt-0.5">{pt.temp}°</div>
+                <div className="text-[9px] text-[#5C6777]">°C</div>
               </div>
             ))}
           </div>
         </div>
 
-        {/* Track 3: Root-zone Soil Moisture (%) */}
-        <div>
-          <div className="flex items-center justify-between text-xs mb-1">
-            <span className="text-amber-400 font-bold">3. Soil Moisture Deficit (%)</span>
-            <span className="text-slate-400 text-[11px]">Field Capacity: 38% | Stress Threshold: &lt;22%</span>
+        {/* Track 3: Root-zone Soil Moisture */}
+        <div className="space-y-1">
+          <div className="flex items-center justify-between text-[11px]">
+            <span className="text-[#F59E0B] font-semibold">3. Soil Moisture Deficit (%)</span>
+            <span className="text-[#5C6777]">Threshold: &lt;22% (Stress Zone)</span>
           </div>
           <div className="grid grid-cols-9 gap-1 text-center">
             {timePoints.map((pt, i) => (
-              <div key={i} className={`p-2 rounded border ${pt.label === 'NOW' ? 'bg-amber-950/80 border-amber-500/80 ring-2 ring-amber-500/30' : 'bg-slate-900 border-slate-800'}`}>
-                <div className="text-[10px] text-slate-400">{pt.label}</div>
-                <div className={`text-sm font-extrabold tabular-nums ${pt.sm <= 18.0 ? 'text-red-400' : 'text-amber-300'}`}>{pt.sm}%</div>
-                <div className="text-[9px] text-slate-400">vol %</div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Track 4: Vegetation Vigor (NDVI) */}
-        <div>
-          <div className="flex items-center justify-between text-xs mb-1">
-            <span className="text-emerald-400 font-bold">4. Vegetation Health (NDVI)</span>
-            <span className="text-slate-400 text-[11px]">Healthy: &gt;0.45 | Stress: &lt;0.35</span>
-          </div>
-          <div className="grid grid-cols-9 gap-1 text-center">
-            {timePoints.map((pt, i) => (
-              <div key={i} className={`p-2 rounded border ${pt.label === 'NOW' ? 'bg-emerald-950/80 border-emerald-500/80 ring-2 ring-emerald-500/30' : 'bg-slate-900 border-slate-800'}`}>
-                <div className="text-[10px] text-slate-400">{pt.label}</div>
-                <div className="text-sm font-extrabold text-emerald-300 tabular-nums">{pt.ndvi}</div>
-                <div className="text-[9px] text-slate-400">index</div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Track 5: Composite Climate Risk (%) */}
-        <div className="pt-2 border-t border-slate-800">
-          <div className="flex items-center justify-between text-xs mb-1">
-            <span className="text-purple-400 font-bold">5. Modelled Drought Risk Trajectory (%)</span>
-            <span className="text-amber-400 text-[11px] font-bold">Current: 78.4% (HIGH) → Projected: 87.5% (CRITICAL)</span>
-          </div>
-          <div className="grid grid-cols-9 gap-1 text-center">
-            {timePoints.map((pt, i) => (
-              <div key={i} className={`p-2 rounded border ${pt.label === 'NOW' ? 'bg-purple-950/90 border-purple-500 ring-2 ring-purple-500/40' : 'bg-slate-900 border-slate-800'}`}>
-                <div className="text-[10px] text-slate-400">{pt.label}</div>
-                <div className="text-sm font-black text-purple-300 tabular-nums">{pt.risk}%</div>
-                <div className="text-[9px] text-slate-400">{pt.type}</div>
+              <div
+                key={i}
+                className={`p-1.5 rounded border ${
+                  pt.label === 'NOW'
+                    ? 'bg-[rgba(245,158,11,0.12)] border-[#F59E0B]/60'
+                    : 'bg-[#15191F] border-[rgba(255,255,255,0.04)]'
+                }`}
+              >
+                <div className="text-[9.5px] text-[#5C6777]">{pt.label}</div>
+                <div className={`text-xs font-bold tabular-nums mt-0.5 ${pt.sm <= 18 ? 'text-[#EF4444]' : 'text-[#F59E0B]'}`}>
+                  {pt.sm}%
+                </div>
+                <div className="text-[9px] text-[#5C6777]">sm</div>
               </div>
             ))}
           </div>

@@ -11,19 +11,20 @@ import {
   fallbackActions,
   fallbackAlerts
 } from '@/lib/demoData';
-import { MetricCard } from '@/components/ui/MetricCard';
-import { RiskCard } from '@/components/ui/RiskCard';
-import { RiskBadge } from '@/components/ui/RiskBadge';
-import { DataStatusBadge } from '@/components/ui/DataStatusBadge';
+import { HeroEnvironmentalState } from '@/components/ui/HeroEnvironmentalState';
+import { MetricStrip, MetricItem } from '@/components/ui/MetricStrip';
 import { MapContainer } from '@/components/map/MapContainer';
+import { RiskBadge } from '@/components/ui/RiskBadge';
 import { 
   AlertTriangle, 
   ArrowRight, 
   Cpu, 
   ExternalLink,
-  Bell
+  Bell,
+  MapPin,
+  Bot,
+  Radio
 } from 'lucide-react';
-import { HeroEnvironmentalState } from '@/components/ui/HeroEnvironmentalState';
 
 export default function DashboardPage() {
   const [stationId, setStationId] = useState<number>(62);
@@ -55,258 +56,247 @@ export default function DashboardPage() {
 
   const currentStation = stations.find((s) => s.id === stationId) || stations[0];
 
+  // Prepare unified metric strip items
+  const metricItems: MetricItem[] = [
+    {
+      id: 'rain',
+      label: 'Precipitation',
+      value: env.rainfallCurrentMm,
+      unit: 'mm',
+      baseline: `${env.rainfallBaselineMm} mm`,
+      deviation: `${env.rainfallAnomalyPct}%`,
+      deviationTrend: 'DOWN',
+      status: 'OBSERVED',
+      source: 'Conduit Dual Gauges',
+      provenanceExplanation: 'Recorded by dual tipping-bucket rain gauges (rg1, rg2) at JKUAT. Indicates 0.0 mm diurnal accumulation.'
+    },
+    {
+      id: 'sm',
+      label: 'Root-zone Moisture',
+      value: env.soilMoistureCurrentPct,
+      unit: '%',
+      baseline: `${env.soilMoistureBaselinePct}%`,
+      deviation: `${env.soilMoistureAnomalyPct}%`,
+      deviationTrend: 'DOWN',
+      status: 'DERIVED',
+      source: 'Hydrological Balance',
+      provenanceExplanation: 'Soil water mass balance model calibrated with Sentinel-1 SAR backscatter. Reflects severe root-zone desiccation.'
+    },
+    {
+      id: 'temp',
+      label: 'Surface Temperature',
+      value: env.temperatureCurrentC,
+      unit: '°C',
+      baseline: `${env.temperatureBaselineC}°C`,
+      deviation: `+${env.temperatureAnomalyC}°C`,
+      deviationTrend: 'UP',
+      status: 'OBSERVED',
+      source: 'Conduit SHT & BMX',
+      provenanceExplanation: 'Consensus ambient thermal reading across SHT31, MCP9808, and BMX280 precision thermistors at 2-meter instrument height.'
+    },
+    {
+      id: 'et0',
+      label: 'Evaporative Demand',
+      value: env.evapotranspirationMmDay,
+      unit: 'mm/day',
+      baseline: '3.8 mm/day',
+      deviation: '+21.5%',
+      deviationTrend: 'UP',
+      status: 'DERIVED',
+      source: 'Hargreaves-Samani',
+      provenanceExplanation: 'Atmospheric drying potential computed from Conduit thermal diurnal peak, SI1145 solar irradiance, and wind velocity.'
+    }
+  ];
+
   return (
-    <div className="space-y-6 max-w-7xl mx-auto">
-      {/* 1. Header & Location Selector */}
-      <div className="flex flex-wrap items-center justify-between gap-4 p-4 rounded-lg border border-slate-800 bg-slate-900/60 font-mono">
-        <div>
+    <div className="space-y-5 max-w-7xl mx-auto font-mono">
+      {/* 1. Header Command Ribbon */}
+      <div className="flex flex-wrap items-center justify-between gap-3 p-3.5 rounded border border-[rgba(255,255,255,0.08)] bg-[#111418]">
+        <div className="flex items-center gap-3">
           <div className="flex items-center gap-2">
-            <h1 className="text-lg font-black tracking-wider text-slate-100 uppercase">
+            <Radio className="w-4 h-4 text-[#10B981] animate-pulse" />
+            <h1 className="text-sm font-bold tracking-wider text-[#F1F4F8] uppercase">
               Environmental Command Center
             </h1>
-            <span className="text-[10px] px-2 py-0.5 rounded bg-emerald-950 text-emerald-400 border border-emerald-800 font-bold">
-              ● TELEMETRY ACTIVE
-            </span>
           </div>
-          <p className="text-xs text-slate-400 mt-1 font-sans">
-            Real-time physical monitoring and risk intelligence for <strong>{currentStation.name}</strong>.
-          </p>
+          <span className="hidden sm:inline text-xs text-[#5C6777]">|</span>
+          <div className="hidden sm:flex items-center gap-1.5 text-xs text-[#8E9BAE]">
+            <MapPin className="w-3.5 h-3.5 text-[#06B6D4]" />
+            <span>{currentStation.county} County, Kenya</span>
+            <span className="text-[#5C6777]">({currentStation.elevationMeters}m elev)</span>
+          </div>
         </div>
 
-        {/* Station Dropdown & Alerts */}
-        <div className="flex items-center gap-3">
+        {/* Station Dropdown & Alerts Badge */}
+        <div className="flex items-center gap-2.5">
           <Link
             href="/alerts"
-            className="flex items-center gap-1.5 px-2.5 py-1 rounded bg-red-950/60 border border-red-800 text-[11px] text-red-300 hover:bg-red-900/60 transition-colors"
+            className="flex items-center gap-1.5 px-2 py-1 rounded bg-[rgba(239,68,68,0.12)] border border-[rgba(239,68,68,0.3)] text-[11px] text-[#F87171] hover:bg-[rgba(239,68,68,0.2)] transition-colors"
           >
-            <Bell className="w-3 h-3 text-red-400 animate-pulse" />
-            <span>{alerts.filter((a) => a.status === 'ACTIVE').length} ALERTS</span>
+            <Bell className="w-3 h-3 text-[#EF4444]" />
+            <span>{alerts.filter((a) => a.status === 'ACTIVE').length} ACTIVE ALERTS</span>
           </Link>
 
-          <span className="text-xs text-slate-400">Station:</span>
-          <select
-            value={stationId}
-            onChange={(e) => setStationId(Number(e.target.value))}
-            className="bg-slate-950 border border-slate-800 rounded px-3 py-1.5 text-xs text-slate-200 font-mono focus:outline-none focus:border-cyan-500 cursor-pointer"
-          >
-            {stations.map((s) => (
-              <option key={s.id} value={s.id}>
-                {s.isPrimaryConduit ? `★ [PRIMARY] ${s.name}` : s.name} ({s.county})
-              </option>
-            ))}
-          </select>
+          <div className="flex items-center gap-1.5">
+            <span className="text-[11px] text-[#8E9BAE]">Station:</span>
+            <select
+              value={stationId}
+              onChange={(e) => setStationId(Number(e.target.value))}
+              aria-label="Select Environmental Station"
+              className="bg-[#15191F] border border-[rgba(255,255,255,0.1)] rounded px-2.5 py-1 text-xs text-[#F1F4F8] focus:outline-none focus:border-[#06B6D4] cursor-pointer"
+            >
+              {stations.map((s) => (
+                <option key={s.id} value={s.id}>
+                  {s.isPrimaryConduit ? `★ ${s.name}` : s.name}
+                </option>
+              ))}
+            </select>
+          </div>
         </div>
       </div>
 
-      {/* 2. Hero Environmental State Visualization (Requirement #8 & #12) */}
+      {/* 2. Hero Environmental State (Dominant State Metric) */}
       <HeroEnvironmentalState primaryRisk={risks[0]} stationName={currentStation.name} />
 
-      {/* 3. Top Risk & Health KPI Ribbon (Requirement #42) */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
-        <div className="p-3.5 rounded-lg border border-red-900/50 bg-red-950/20 font-mono">
-          <div className="text-[10px] text-red-300 uppercase font-bold flex justify-between">
-            <span>Drought Risk</span>
-            <span>HIGH</span>
-          </div>
-          <div className="text-2xl font-black text-red-400 mt-1 tabular-nums">78.4%</div>
-          <div className="text-[10px] text-slate-400 mt-0.5">Horizon: 7–14 days</div>
-        </div>
-
-        <div className="p-3.5 rounded-lg border border-amber-900/50 bg-amber-950/20 font-mono">
-          <div className="text-[10px] text-amber-300 uppercase font-bold flex justify-between">
-            <span>Water Stress</span>
-            <span>HIGH</span>
-          </div>
-          <div className="text-2xl font-black text-amber-400 mt-1 tabular-nums">78.5%</div>
-          <div className="text-[10px] text-slate-400 mt-0.5">-4.6 mm/day net</div>
-        </div>
-
-        <div className="p-3.5 rounded-lg border border-yellow-900/50 bg-yellow-950/20 font-mono">
-          <div className="text-[10px] text-yellow-300 uppercase font-bold flex justify-between">
-            <span>Heat Hazard</span>
-            <span>MED</span>
-          </div>
-          <div className="text-2xl font-black text-yellow-400 mt-1 tabular-nums">58.0%</div>
-          <div className="text-[10px] text-slate-400 mt-0.5">WBGT: 22.7°C</div>
-        </div>
-
-        <div className="p-3.5 rounded-lg border border-emerald-900/50 bg-emerald-950/20 font-mono">
-          <div className="text-[10px] text-emerald-300 uppercase font-bold flex justify-between">
-            <span>Flood Risk</span>
-            <span>LOW</span>
-          </div>
-          <div className="text-2xl font-black text-emerald-400 mt-1 tabular-nums">4.0%</div>
-          <div className="text-[10px] text-slate-400 mt-0.5">High soil capacity</div>
-        </div>
-
-        <div className="p-3.5 rounded-lg border border-cyan-900/50 bg-cyan-950/20 font-mono">
-          <div className="text-[10px] text-cyan-300 uppercase font-bold flex justify-between">
-            <span>Crop Vigor</span>
-            <span>DEFICIT</span>
-          </div>
-          <div className="text-2xl font-black text-cyan-400 mt-1 tabular-nums">0.38</div>
-          <div className="text-[10px] text-slate-400 mt-0.5">NDVI (-17.4%)</div>
-        </div>
-
-        <div className="p-3.5 rounded-lg border border-slate-800 bg-slate-900/60 font-mono">
-          <div className="text-[10px] text-slate-400 uppercase font-bold flex justify-between">
-            <span>Data Health</span>
-            <span className="text-emerald-400">96.4%</span>
-          </div>
-          <div className="text-2xl font-black text-slate-200 mt-1 tabular-nums">EXCELLENT</div>
-          <div className="text-[10px] text-slate-400 mt-0.5">23/24 sensors live</div>
-        </div>
-      </div>
-
-      {/* 3. Current Environmental State Cards (Section 5: WHAT IS HAPPENING?) */}
-      <div>
-        <div className="flex items-center justify-between mb-3 font-mono">
-          <div className="flex items-center gap-2">
-            <span className="text-xs font-bold uppercase tracking-wider text-slate-300">
-              Current Physical Environmental State
-            </span>
-            <DataStatusBadge status="OBSERVED" source="Conduit@Empathy" timeAgo="1 min ago" />
-          </div>
-          <Link href="/timeline" className="text-xs text-cyan-400 hover:underline flex items-center gap-1">
-            <span>Full Chronological Timeline</span>
-            <ArrowRight className="w-3.5 h-3.5" />
+      {/* 3. Compact Continuous Metric Strip */}
+      <div className="space-y-1.5">
+        <div className="flex items-center justify-between text-xs text-[#8E9BAE] px-0.5">
+          <span className="uppercase tracking-wider text-[11px]">Primary Physical State (Observed & Derived)</span>
+          <Link href="/timeline" className="text-[#06B6D4] hover:underline flex items-center gap-1 text-[11px]">
+            <span>View Timeline</span>
+            <ArrowRight className="w-3 h-3" />
           </Link>
         </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          <MetricCard
-            label="Precipitation (Dual Gauges)"
-            value={env.rainfallCurrentMm}
-            unit="mm"
-            baseline={`${env.rainfallBaselineMm} mm`}
-            deviation={`${env.rainfallAnomalyPct}%`}
-            deviationTrend="DOWN"
-            status="OBSERVED"
-            source="Conduit Tipping Bucket"
-            provenanceExplanation="Measured directly by dual independent tipping-bucket rain gauges at the JKUAT field station. Represents accumulated rainfall over the current diurnal cycle."
-          />
-
-          <MetricCard
-            label="Root-zone Soil Moisture"
-            value={env.soilMoistureCurrentPct}
-            unit="%"
-            baseline={`${env.soilMoistureBaselinePct}%`}
-            deviation={`${env.soilMoistureAnomalyPct}%`}
-            deviationTrend="DOWN"
-            status="DERIVED"
-            source="Hydrological Balance + Radar"
-            provenanceExplanation="Calculated via root-zone soil water mass balance integrating antecedent Conduit rainfall, temperature-driven evapotranspiration, and calibrated with Copernicus Sentinel-1 microwave backscatter."
-          />
-
-          <MetricCard
-            label="Surface Air Temperature"
-            value={env.temperatureCurrentC}
-            unit="°C"
-            baseline={`${env.temperatureBaselineC}°C`}
-            deviation={`+${env.temperatureAnomalyC}°C`}
-            deviationTrend="UP"
-            status="OBSERVED"
-            source="Conduit SHT & BMX"
-            provenanceExplanation="Consensus measurement between BMX, MCP, and SHT precision thermistors at 2-meter instrument height. High thermal reading indicates increased vapor pressure deficit."
-          />
-
-          <MetricCard
-            label="Evapotranspiration Demand (ET0)"
-            value={env.evapotranspirationMmDay}
-            unit="mm/day"
-            baseline="3.8 mm/day"
-            deviation="+21.5%"
-            deviationTrend="UP"
-            status="DERIVED"
-            source="Hargreaves-Samani Model"
-            provenanceExplanation="Potential evapotranspiration estimated using Conduit temperature extrema, SI1145 downwelling solar irradiance, and wind velocity."
-          />
-        </div>
+        <MetricStrip metrics={metricItems} />
       </div>
 
-      {/* 4. Active Risk Events & Compound Warning */}
-      <div className="p-4 rounded-lg border border-amber-800/60 bg-amber-950/20 font-mono">
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <div className="flex items-center gap-2.5">
-            <AlertTriangle className="w-5 h-5 text-amber-400" />
-            <div>
-              <div className="flex items-center gap-2">
-                <span className="font-extrabold text-slate-100 text-xs uppercase tracking-wider">
-                  Active Compound Event: Compound Agricultural & Hydrological Water Stress
-                </span>
-                <RiskBadge severity="HIGH" size="sm" />
-              </div>
-              <p className="text-[11px] text-slate-300 font-sans mt-0.5">
-                Simultaneous 100% rainfall deficit + 41.8% soil moisture depletion + daytime thermal surge detected at JKUAT catchment.
-              </p>
+      {/* 4. Active Compound Hazard Notice */}
+      <div className="p-3.5 rounded border border-[rgba(245,158,11,0.3)] bg-[rgba(245,158,11,0.06)] flex flex-wrap items-center justify-between gap-3 text-xs">
+        <div className="flex items-center gap-2.5">
+          <AlertTriangle className="w-4 h-4 text-[#F59E0B] shrink-0" />
+          <div>
+            <div className="flex items-center gap-2">
+              <span className="font-bold text-[#F1F4F8] text-xs uppercase tracking-wider">
+                Active Compound Hazard: Agricultural & Hydrological Drought Concurrence
+              </span>
+              <RiskBadge severity="HIGH" size="sm" />
             </div>
+            <p className="text-[11px] text-[#8E9BAE] font-sans mt-0.5">
+              Simultaneous 100% rainfall deficit + 41.8% root-zone moisture collapse + thermal evaporative surge detected across Juja catchment.
+            </p>
           </div>
-          <Link
-            href="/scenarios"
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded bg-cyan-600 hover:bg-cyan-500 text-white text-xs font-bold transition-colors"
-          >
-            <Cpu className="w-3.5 h-3.5" />
-            <span>SIMULATE IN DIGITAL TWIN</span>
-          </Link>
         </div>
+        <Link
+          href="/scenarios"
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded bg-[#0284C7] hover:bg-[#0369A1] text-white text-xs font-semibold transition-colors shrink-0"
+        >
+          <Cpu className="w-3.5 h-3.5" />
+          <span>SIMULATE SCENARIO</span>
+        </Link>
       </div>
 
-      {/* 5. Geospatial Intelligence & Risk Center Split */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        {/* Map View (7 columns) */}
+      {/* 5. Geospatial Workspace & Decision Engine Split */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
+        {/* Map Workspace (7 cols) */}
         <div className="lg:col-span-7 space-y-2">
-          <div className="flex items-center justify-between font-mono text-xs">
-            <span className="font-bold text-slate-300 uppercase tracking-wider">
-              Geospatial Risk Distribution
+          <div className="flex items-center justify-between text-xs text-[#8E9BAE]">
+            <span className="font-semibold uppercase tracking-wider text-[11px]">
+              Geospatial Risk Observatory
             </span>
-            <Link href="/map" className="text-cyan-400 hover:underline flex items-center gap-1">
-              <span>Expand Full Map</span>
+            <Link href="/map" className="text-[#06B6D4] hover:underline flex items-center gap-1 text-[11px]">
+              <span>Expand Map Workspace</span>
               <ExternalLink className="w-3 h-3" />
             </Link>
           </div>
-          <MapContainer stations={stations} selectedStationId={stationId} onSelectStation={(s) => setStationId(s.id)} />
+          <MapContainer
+            stations={stations}
+            selectedStationId={stationId}
+            onSelectStation={(s) => setStationId(s.id)}
+          />
         </div>
 
-        {/* Active Risks Breakdown (5 columns) */}
+        {/* Analytical Risk & Interventions Split (5 cols) */}
         <div className="lg:col-span-5 space-y-4">
-          <div className="flex items-center justify-between font-mono text-xs">
-            <span className="font-bold text-slate-300 uppercase tracking-wider">
-              Assessed Climate Risks
-            </span>
-            <Link href="/risk" className="text-cyan-400 hover:underline flex items-center gap-1">
-              <span>View All Drivers</span>
-              <ArrowRight className="w-3 h-3" />
-            </Link>
-          </div>
-
-          <div className="space-y-3">
-            {risks.slice(0, 2).map((risk, idx) => (
-              <RiskCard key={idx} risk={risk} />
-            ))}
-          </div>
-
-          {/* Recommended Interventions Quick Box */}
-          <div className="p-4 rounded-lg border border-slate-800 bg-slate-900/60 font-mono">
-            <div className="flex items-center justify-between text-xs font-bold mb-3">
-              <span className="text-slate-300 uppercase">Immediate Interventions</span>
-              <Link href="/actions" className="text-cyan-400 hover:underline text-[11px]">
-                Action Center ({actions.length}) →
+          {/* Assessed Climate Hazards */}
+          <div className="space-y-2">
+            <div className="flex items-center justify-between text-xs text-[#8E9BAE]">
+              <span className="font-semibold uppercase tracking-wider text-[11px]">
+                Assessed Hazard Threats
+              </span>
+              <Link href="/risk" className="text-[#06B6D4] hover:underline text-[11px]">
+                All Hazards →
               </Link>
             </div>
-            <div className="space-y-2">
-              {actions.slice(0, 2).map((act) => (
-                <div key={act.id} className="p-2.5 rounded bg-slate-950 border border-slate-800 text-xs">
-                  <div className="flex items-center justify-between text-[10px] mb-1">
-                    <span className="text-red-400 font-bold">{act.urgency}</span>
-                    <span className="text-slate-400">{act.targetSector}</span>
+
+            <div className="rounded border border-[rgba(255,255,255,0.08)] bg-[#111418] divide-y divide-[rgba(255,255,255,0.06)]">
+              {risks.slice(0, 3).map((risk, idx) => (
+                <div key={idx} className="p-3 flex items-center justify-between hover:bg-[#15191F] transition-colors">
+                  <div className="space-y-0.5">
+                    <div className="flex items-center gap-1.5">
+                      <span className="font-bold text-[#F1F4F8] text-xs uppercase">
+                        {risk.category.replace('_', ' ')}
+                      </span>
+                      <RiskBadge severity={risk.severity} size="sm" />
+                    </div>
+                    <div className="text-[10px] text-[#8E9BAE] font-sans">
+                      Horizon: {risk.horizon} • Confidence: {risk.confidencePct}%
+                    </div>
                   </div>
-                  <div className="font-bold text-slate-200 text-[11.5px] leading-snug">{act.title}</div>
-                  <div className="text-[10px] text-amber-300 mt-1 font-bold">
-                    Avoided Loss: {act.avoidedLossEstimate}
+                  <div className="text-right">
+                    <div className="text-xl font-bold text-[#F1F4F8] tabular-nums">
+                      {Math.round(risk.probabilityPct)}%
+                    </div>
+                    <div className="text-[9px] text-[#5C6777] uppercase font-semibold">Probability</div>
                   </div>
                 </div>
               ))}
             </div>
+          </div>
+
+          {/* Recommended Interventions Quick Queue */}
+          <div className="space-y-2">
+            <div className="flex items-center justify-between text-xs text-[#8E9BAE]">
+              <span className="font-semibold uppercase tracking-wider text-[11px]">
+                Priority Interventions Queue
+              </span>
+              <Link href="/actions" className="text-[#06B6D4] hover:underline text-[11px]">
+                Action Engine ({actions.length}) →
+              </Link>
+            </div>
+
+            <div className="rounded border border-[rgba(255,255,255,0.08)] bg-[#111418] divide-y divide-[rgba(255,255,255,0.06)]">
+              {actions.slice(0, 2).map((act) => (
+                <div key={act.id} className="p-3 hover:bg-[#15191F] transition-colors space-y-1">
+                  <div className="flex items-center justify-between text-[10px]">
+                    <span className="text-[#F87171] font-bold tracking-wider">{act.urgency}</span>
+                    <span className="text-[#5C6777]">{act.targetSector}</span>
+                  </div>
+                  <div className="font-semibold text-[#F1F4F8] text-xs leading-snug">{act.title}</div>
+                  <div className="text-[10px] text-[#FBBF24]">
+                    Avoided Loss: <strong className="font-medium">{act.avoidedLossEstimate}</strong>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Guardian Insight Callout */}
+          <div className="p-3 rounded border border-[#06B6D4]/30 bg-[#0E151B] flex items-center justify-between gap-3 text-xs">
+            <div className="flex items-center gap-2">
+              <div className="w-7 h-7 rounded bg-[#06B6D4]/20 border border-[#06B6D4]/40 flex items-center justify-center text-[#06B6D4] shrink-0">
+                <Bot className="w-3.5 h-3.5" />
+              </div>
+              <div>
+                <span className="text-[#06B6D4] font-bold text-[11px] block">Guardian Copilot Available</span>
+                <span className="text-[#8E9BAE] text-[10px] font-sans">Query physical telemetry & scenario impacts</span>
+              </div>
+            </div>
+            <Link
+              href="/copilot"
+              className="px-2.5 py-1 rounded bg-[#06B6D4] hover:bg-[#0891B2] text-slate-950 font-bold text-[10.5px] transition-colors shrink-0"
+            >
+              Ask Guardian
+            </Link>
           </div>
         </div>
       </div>

@@ -1,10 +1,11 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Cpu, Play, ShieldCheck, TrendingUp } from 'lucide-react';
+import { Cpu, Play, ShieldCheck, TrendingUp, Sliders, Sparkles } from 'lucide-react';
 import { ScenarioSimulationResult } from '@aquaguard/shared-types';
 import { api } from '@/lib/api';
 import { ScenarioComparisonChart } from '@/components/charts/ScenarioComparisonChart';
+import { toast } from 'sonner';
 
 export function ScenarioLab() {
   const [rainfallDelta, setRainfallDelta] = useState(-30);
@@ -13,7 +14,7 @@ export function ScenarioLab() {
   const [initialSoilMoisture, setInitialSoilMoisture] = useState(19.5);
   const [isSimulating, setIsSimulating] = useState(false);
 
-  // Result state (seeded with severe drought baseline result)
+  // Result state
   const [result, setResult] = useState<ScenarioSimulationResult>({
     id: "SIM-DEMO-01",
     parameters: {
@@ -64,6 +65,7 @@ export function ScenarioLab() {
         stationId: 62
       });
       setResult(res);
+      toast.success("Digital Twin simulation updated");
     } catch {
       // Offline fallback computation
       const curDr = 78.4;
@@ -85,12 +87,12 @@ export function ScenarioLab() {
         generatedAt: new Date().toISOString(),
         status: "SIMULATED"
       });
+      toast.success("Local Digital Twin simulation completed");
     } finally {
       setIsSimulating(false);
     }
   };
 
-  // Presets
   const applyPreset = (rain: number, temp: number, days: number) => {
     setRainfallDelta(rain);
     setTemperatureDelta(temp);
@@ -98,67 +100,74 @@ export function ScenarioLab() {
   };
 
   return (
-    <div className="space-y-6 font-mono">
+    <div className="space-y-5 font-mono text-xs">
       {/* Top Banner */}
-      <div className="flex flex-wrap items-center justify-between gap-4 p-4 rounded-lg border border-slate-800 bg-slate-900/60">
+      <div className="flex flex-wrap items-center justify-between gap-3 p-3.5 rounded border border-[rgba(255,255,255,0.08)] bg-[#111418]">
         <div>
           <div className="flex items-center gap-2">
-            <Cpu className="w-5 h-5 text-cyan-400" />
-            <h2 className="text-base font-extrabold tracking-wider text-slate-100 uppercase">
-              Climate Scenario Lab (Digital Twin Engine)
-            </h2>
-            <span className="text-[10px] px-2 py-0.5 rounded bg-cyan-950 text-cyan-300 border border-cyan-800 font-bold">
-              MODELLED SCENARIOS
+            <Cpu className="w-4 h-4 text-[#06B6D4]" />
+            <h1 className="text-sm font-bold tracking-wider text-[#F1F4F8] uppercase">
+              Climate Scenario Lab (Digital Twin Workspace)
+            </h1>
+            <span className="text-[10px] px-2 py-0.5 rounded bg-[rgba(249,115,22,0.15)] text-[#FB923C] border border-[rgba(249,115,22,0.3)] font-semibold">
+              STATUS: SIMULATED
             </span>
           </div>
-          <p className="text-xs text-slate-400 mt-1 font-sans">
-            Simulate future localized risk trajectories by perturbing Conduit precipitation, atmospheric temperatures, and drying horizon.
+          <p className="text-xs text-[#8E9BAE] mt-0.5 font-sans">
+            Simulate future localized microclimate trajectories by perturbing rainfall, temperature, and drying horizons.
           </p>
         </div>
 
-        {/* Preset Selector (Requirement #78, #79) */}
-        <div className="flex items-center gap-1.5 bg-slate-950 p-1 rounded-md border border-slate-800 text-xs">
-          <span className="text-[10px] text-slate-400 px-2 uppercase font-bold">Presets:</span>
+        {/* Presets Bar */}
+        <div className="flex items-center gap-1.5 bg-[#15191F] p-1 rounded border border-[rgba(255,255,255,0.06)]">
+          <span className="text-[10px] text-[#5C6777] px-1.5 uppercase font-semibold flex items-center gap-1">
+            <Sparkles className="w-3 h-3 text-[#F59E0B]" />
+            Presets:
+          </span>
           <button
             onClick={() => applyPreset(0, 0, 7)}
-            className="px-2 py-1 rounded bg-slate-900 hover:bg-slate-800 text-slate-300 text-xs cursor-pointer"
+            className="px-2 py-1 rounded bg-[#111418] hover:bg-[#1A2027] text-[#8E9BAE] hover:text-[#F1F4F8] transition-colors cursor-pointer text-xs"
           >
             Baseline
           </button>
           <button
             onClick={() => applyPreset(-30, 2.0, 14)}
-            className="px-2 py-1 rounded bg-amber-500/20 text-amber-300 border border-amber-500/40 text-xs font-bold cursor-pointer"
+            className="px-2 py-1 rounded bg-[rgba(245,158,11,0.15)] text-[#FBBF24] border border-[rgba(245,158,11,0.3)] font-semibold transition-colors cursor-pointer text-xs"
           >
-            Severe Drought (Demo)
+            Severe Drought
           </button>
           <button
             onClick={() => applyPreset(-10, 4.0, 14)}
-            className="px-2 py-1 rounded bg-slate-900 hover:bg-slate-800 text-slate-300 text-xs cursor-pointer"
+            className="px-2 py-1 rounded bg-[#111418] hover:bg-[#1A2027] text-[#8E9BAE] hover:text-[#F1F4F8] transition-colors cursor-pointer text-xs"
           >
             Heatwave Surge
           </button>
           <button
             onClick={() => applyPreset(40, -1.0, 7)}
-            className="px-2 py-1 rounded bg-slate-900 hover:bg-slate-800 text-slate-300 text-xs cursor-pointer"
+            className="px-2 py-1 rounded bg-[#111418] hover:bg-[#1A2027] text-[#8E9BAE] hover:text-[#F1F4F8] transition-colors cursor-pointer text-xs"
           >
-            Heavy Rain Influx
+            Rain Influx
           </button>
         </div>
       </div>
 
-      {/* Interactive Controls & Live Digital Twin Display */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        {/* Left Column: Sliders and Simulation Parameters */}
-        <div className="lg:col-span-5 p-5 rounded-lg border border-slate-800 bg-slate-900/60 space-y-5">
-          <div className="text-xs font-bold uppercase tracking-wider text-slate-300 border-b border-slate-800 pb-2">
-            Simulation Parameters
+      {/* Simulation Workspace Split */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
+        {/* Left Column: Interactive Parameters */}
+        <div className="lg:col-span-5 p-4 rounded border border-[rgba(255,255,255,0.08)] bg-[#111418] space-y-4">
+          <div className="flex items-center justify-between border-b border-[rgba(255,255,255,0.06)] pb-2 text-xs">
+            <span className="font-semibold uppercase tracking-wider text-[#F1F4F8] flex items-center gap-1.5">
+              <Sliders className="w-3.5 h-3.5 text-[#06B6D4]" />
+              Simulation Controls
+            </span>
+            <span className="text-[10px] text-[#5C6777]">Perturbation Vector</span>
           </div>
 
-          {/* Slider 1: Rainfall Change */}
-          <div className="space-y-1.5">
+          {/* Slider 1: Rainfall */}
+          <div className="space-y-1">
             <div className="flex justify-between text-xs">
-              <span className="text-slate-300">Precipitation Deviation ($\Delta P$)</span>
-              <span className="text-cyan-400 font-bold">{rainfallDelta > 0 ? `+${rainfallDelta}%` : `${rainfallDelta}%`}</span>
+              <span className="text-[#8E9BAE]">Precipitation Deviation (ΔP)</span>
+              <span className="text-[#06B6D4] font-bold">{rainfallDelta > 0 ? `+${rainfallDelta}%` : `${rainfallDelta}%`}</span>
             </div>
             <input
               type="range"
@@ -167,20 +176,21 @@ export function ScenarioLab() {
               step="5"
               value={rainfallDelta}
               onChange={(e) => setRainfallDelta(Number(e.target.value))}
-              className="w-full accent-cyan-500 cursor-pointer"
+              aria-label="Precipitation Deviation"
+              className="w-full accent-[#06B6D4] cursor-pointer"
             />
-            <div className="flex justify-between text-[10px] text-slate-400">
-              <span>-60% (Severe Deficit)</span>
+            <div className="flex justify-between text-[9.5px] text-[#5C6777]">
+              <span>-60% (Acute Deficit)</span>
               <span>0% Normal</span>
-              <span>+60% (Heavy Rain)</span>
+              <span>+60% (Recharge)</span>
             </div>
           </div>
 
-          {/* Slider 2: Temperature Change */}
-          <div className="space-y-1.5">
+          {/* Slider 2: Temperature */}
+          <div className="space-y-1">
             <div className="flex justify-between text-xs">
-              <span className="text-slate-300">Thermal Warming ($\Delta T$)</span>
-              <span className="text-red-400 font-bold">+{temperatureDelta.toFixed(1)}°C</span>
+              <span className="text-[#8E9BAE]">Thermal Warming (ΔT)</span>
+              <span className="text-[#F87171] font-bold">+{temperatureDelta.toFixed(1)}°C</span>
             </div>
             <input
               type="range"
@@ -189,20 +199,21 @@ export function ScenarioLab() {
               step="0.5"
               value={temperatureDelta}
               onChange={(e) => setTemperatureDelta(Number(e.target.value))}
-              className="w-full accent-red-500 cursor-pointer"
+              aria-label="Thermal Warming"
+              className="w-full accent-[#EF4444] cursor-pointer"
             />
-            <div className="flex justify-between text-[10px] text-slate-400">
-              <span>+0.0°C (Seasonal Normal)</span>
-              <span>+2.5°C</span>
-              <span>+5.0°C (Extreme Thermal)</span>
+            <div className="flex justify-between text-[9.5px] text-[#5C6777]">
+              <span>+0.0°C Normal</span>
+              <span>+2.5°C Elevated</span>
+              <span>+5.0°C Extreme</span>
             </div>
           </div>
 
-          {/* Slider 3: Simulation Horizon */}
-          <div className="space-y-1.5">
+          {/* Slider 3: Horizon */}
+          <div className="space-y-1">
             <div className="flex justify-between text-xs">
-              <span className="text-slate-300">Projection Horizon</span>
-              <span className="text-amber-400 font-bold">{horizonDays} Days</span>
+              <span className="text-[#8E9BAE]">Projection Horizon</span>
+              <span className="text-[#F59E0B] font-bold">{horizonDays} Days</span>
             </div>
             <input
               type="range"
@@ -211,20 +222,21 @@ export function ScenarioLab() {
               step="7"
               value={horizonDays}
               onChange={(e) => setHorizonDays(Number(e.target.value))}
-              className="w-full accent-amber-500 cursor-pointer"
+              aria-label="Projection Horizon"
+              className="w-full accent-[#F59E0B] cursor-pointer"
             />
-            <div className="flex justify-between text-[10px] text-slate-400">
-              <span>7 Days (Weekly)</span>
-              <span>14 Days (Biweekly)</span>
-              <span>30 Days (Monthly)</span>
+            <div className="flex justify-between text-[9.5px] text-[#5C6777]">
+              <span>7d (Synoptic)</span>
+              <span>14d (Medium)</span>
+              <span>30d (Monthly)</span>
             </div>
           </div>
 
           {/* Slider 4: Initial Soil Moisture */}
-          <div className="space-y-1.5">
+          <div className="space-y-1">
             <div className="flex justify-between text-xs">
-              <span className="text-slate-300">Initial Soil Water Content</span>
-              <span className="text-slate-200 font-bold">{initialSoilMoisture}%</span>
+              <span className="text-[#8E9BAE]">Initial Soil Water Content</span>
+              <span className="text-[#F1F4F8] font-bold">{initialSoilMoisture}%</span>
             </div>
             <input
               type="range"
@@ -233,12 +245,13 @@ export function ScenarioLab() {
               step="1"
               value={initialSoilMoisture}
               onChange={(e) => setInitialSoilMoisture(Number(e.target.value))}
-              className="w-full accent-emerald-500 cursor-pointer"
+              aria-label="Initial Soil Water Content"
+              className="w-full accent-[#10B981] cursor-pointer"
             />
-            <div className="flex justify-between text-[10px] text-slate-400">
-              <span>12% (Wilting Point)</span>
-              <span>19.5% (Conduit Observed)</span>
-              <span>40% (Field Capacity)</span>
+            <div className="flex justify-between text-[9.5px] text-[#5C6777]">
+              <span>12% (Wilting)</span>
+              <span>19.5% (Observed)</span>
+              <span>40% (Capacity)</span>
             </div>
           </div>
 
@@ -246,116 +259,93 @@ export function ScenarioLab() {
           <button
             onClick={handleRunSimulation}
             disabled={isSimulating}
-            className="w-full py-2.5 rounded bg-cyan-600 hover:bg-cyan-500 disabled:opacity-50 text-white font-extrabold text-xs flex items-center justify-center gap-2 cursor-pointer transition-all shadow-lg shadow-cyan-950"
+            className="w-full py-2.5 rounded bg-[#0284C7] hover:bg-[#0369A1] disabled:opacity-50 text-white font-bold text-xs flex items-center justify-center gap-2 cursor-pointer transition-all shadow-sm"
           >
             <Play className={`w-3.5 h-3.5 ${isSimulating ? 'animate-spin' : ''}`} />
-            <span>{isSimulating ? 'RUNNING DIGITAL TWIN SIMULATION...' : 'RUN SIMULATION'}</span>
+            <span>{isSimulating ? 'RUNNING DIGITAL TWIN...' : 'RUN SIMULATION'}</span>
           </button>
         </div>
 
         {/* Right Column: Comparative Results */}
         <div className="lg:col-span-7 space-y-4">
-          {/* Comparison Cards: Current vs Scenario */}
-          <div className="p-4 rounded-lg border border-slate-800 bg-slate-900/60">
-            <div className="flex items-center justify-between text-xs font-bold border-b border-slate-800 pb-2 mb-3">
-              <span className="text-slate-400">METRIC COMPARISON</span>
-              <div className="flex items-center gap-6">
-                <span className="text-slate-400">CURRENT</span>
-                <span className="text-cyan-400">SIMULATED SCENARIO</span>
-                <span className="text-amber-400">DELTA</span>
+          <div className="p-4 rounded border border-[rgba(255,255,255,0.08)] bg-[#111418] space-y-3">
+            <div className="flex items-center justify-between text-xs border-b border-[rgba(255,255,255,0.06)] pb-2">
+              <span className="font-semibold text-[#8E9BAE] uppercase tracking-wider text-[11px]">
+                Baseline vs Counterfactual Metrics
+              </span>
+              <div className="flex items-center gap-5 text-[10.5px]">
+                <span className="text-[#5C6777]">CURRENT</span>
+                <span className="text-[#06B6D4] font-semibold">SIMULATED</span>
+                <span className="text-[#F59E0B] font-semibold">DELTA</span>
               </div>
             </div>
 
-            <div className="space-y-3 text-xs">
-              {/* Drought Risk */}
-              <div className="flex items-center justify-between p-2 rounded bg-slate-950/70 border border-slate-800">
-                <span className="text-slate-200 font-bold">Drought Risk Probability</span>
-                <div className="flex items-center gap-8 tabular-nums">
-                  <span className="text-slate-400">{result.currentMetrics.droughtRiskPct}%</span>
-                  <span className="text-cyan-300 font-bold text-sm">{result.projectedMetrics.droughtRiskPct}%</span>
-                  <span className="text-red-400 font-bold">+{result.deltaMetrics.droughtRiskDelta}%</span>
+            <div className="space-y-2">
+              {[
+                { label: 'Drought Risk Probability', cur: result.currentMetrics.droughtRiskPct, sim: result.projectedMetrics.droughtRiskPct, delta: `+${result.deltaMetrics.droughtRiskDelta}%`, deltaColor: 'text-[#F87171]' },
+                { label: 'Root-zone Soil Moisture', cur: result.currentMetrics.soilMoisturePct, sim: result.projectedMetrics.soilMoisturePct, delta: `${result.deltaMetrics.soilMoistureDelta}%`, deltaColor: 'text-[#F87171]' },
+                { label: 'Composite Water Stress', cur: result.currentMetrics.waterStressPct, sim: result.projectedMetrics.waterStressPct, delta: `+${result.deltaMetrics.waterStressDelta}%`, deltaColor: 'text-[#F87171]' },
+                { label: 'Vegetation Canopy Stress', cur: result.currentMetrics.vegetationStressPct, sim: result.projectedMetrics.vegetationStressPct, delta: `+${result.deltaMetrics.vegetationStressDelta}%`, deltaColor: 'text-[#F87171]' },
+              ].map((row, idx) => (
+                <div key={idx} className="flex items-center justify-between p-2 rounded bg-[#15191F] border border-[rgba(255,255,255,0.04)]">
+                  <span className="text-[#F1F4F8] font-medium">{row.label}</span>
+                  <div className="flex items-center gap-6 tabular-nums">
+                    <span className="text-[#8E9BAE] w-12 text-right">{row.cur}%</span>
+                    <span className="text-[#06B6D4] font-bold text-sm w-12 text-right">{row.sim}%</span>
+                    <span className={`${row.deltaColor} font-bold w-12 text-right`}>{row.delta}</span>
+                  </div>
                 </div>
-              </div>
-
-              {/* Soil Moisture */}
-              <div className="flex items-center justify-between p-2 rounded bg-slate-950/70 border border-slate-800">
-                <span className="text-slate-200 font-bold">Root-zone Soil Moisture</span>
-                <div className="flex items-center gap-8 tabular-nums">
-                  <span className="text-slate-400">{result.currentMetrics.soilMoisturePct}%</span>
-                  <span className="text-cyan-300 font-bold text-sm">{result.projectedMetrics.soilMoisturePct}%</span>
-                  <span className="text-red-400 font-bold">{result.deltaMetrics.soilMoistureDelta}%</span>
-                </div>
-              </div>
-
-              {/* Water Stress */}
-              <div className="flex items-center justify-between p-2 rounded bg-slate-950/70 border border-slate-800">
-                <span className="text-slate-200 font-bold">Composite Water Stress</span>
-                <div className="flex items-center gap-8 tabular-nums">
-                  <span className="text-slate-400">{result.currentMetrics.waterStressPct}%</span>
-                  <span className="text-cyan-300 font-bold text-sm">{result.projectedMetrics.waterStressPct}%</span>
-                  <span className="text-red-400 font-bold">+{result.deltaMetrics.waterStressDelta}%</span>
-                </div>
-              </div>
-
-              {/* Vegetation Stress */}
-              <div className="flex items-center justify-between p-2 rounded bg-slate-950/70 border border-slate-800">
-                <span className="text-slate-200 font-bold">Vegetation Canopy Stress</span>
-                <div className="flex items-center gap-8 tabular-nums">
-                  <span className="text-slate-400">{result.currentMetrics.vegetationStressPct}%</span>
-                  <span className="text-cyan-300 font-bold text-sm">{result.projectedMetrics.vegetationStressPct}%</span>
-                  <span className="text-red-400 font-bold">+{result.deltaMetrics.vegetationStressDelta}%</span>
-                </div>
-              </div>
+              ))}
             </div>
 
-            {/* Apache ECharts Baseline vs Scenario Comparison (Requirement #15) */}
-            <div className="mt-4 pt-4 border-t border-slate-800">
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-[11px] font-bold uppercase text-slate-300">
-                  Visual Baseline vs Counterfactual Trajectory
+            {/* ECharts Baseline vs Counterfactual Trajectory */}
+            <div className="mt-3 pt-3 border-t border-[rgba(255,255,255,0.06)]">
+              <div className="flex items-center justify-between mb-2 text-xs">
+                <span className="text-[11px] font-semibold uppercase text-[#8E9BAE]">
+                  Comparative Trajectory Chart
                 </span>
-                <span className="text-[10px] text-amber-400 font-bold flex items-center gap-1">
+                <span className="text-[10px] text-[#F59E0B] font-semibold flex items-center gap-1">
                   <TrendingUp className="w-3 h-3" />
-                  Risk increased by +{result.deltaMetrics.droughtRiskDelta} points under this scenario.
+                  +{result.deltaMetrics.droughtRiskDelta} pts risk shift
                 </span>
               </div>
               <ScenarioComparisonChart
                 currentMetrics={result.currentMetrics}
                 projectedMetrics={result.projectedMetrics}
-                height={220}
+                height={210}
               />
             </div>
           </div>
 
-          {/* Physical Explanation Box */}
-          <div className="p-4 rounded-lg border border-slate-800 bg-slate-950/90 text-xs">
-            <div className="text-[11px] font-bold text-cyan-400 uppercase tracking-wider mb-1 flex items-center gap-1.5">
+          {/* Physical Feedback Analysis */}
+          <div className="p-3.5 rounded border border-[rgba(255,255,255,0.08)] bg-[#111418] text-xs">
+            <div className="text-[11px] font-semibold text-[#06B6D4] uppercase tracking-wider mb-1 flex items-center gap-1.5">
               <ShieldCheck className="w-3.5 h-3.5" />
-              <span>Digital Twin Physical Feedback Analysis</span>
+              <span>Digital Twin State Feedback</span>
             </div>
-            <p className="text-slate-300 font-sans leading-relaxed text-[11.5px]">
+            <p className="text-[#8E9BAE] font-sans leading-relaxed text-[11.5px]">
               {result.explanation}
             </p>
           </div>
 
-          {/* Intervention Simulator: No Action vs Action (Requirement #27) */}
-          <div className="p-4 rounded-lg border border-amber-800/50 bg-amber-950/20 text-xs">
-            <div className="text-[11px] font-bold text-amber-300 uppercase tracking-wider mb-2 flex items-center justify-between">
-              <span>Intervention Impact Simulator</span>
-              <span className="text-[10px] text-amber-400/80">Avoided Loss Modeling</span>
+          {/* Intervention Simulator: Without vs With Action */}
+          <div className="p-3.5 rounded border border-[rgba(245,158,11,0.25)] bg-[rgba(245,158,11,0.04)] text-xs">
+            <div className="text-[11px] font-semibold text-[#FBBF24] uppercase tracking-wider mb-2 flex items-center justify-between">
+              <span>Intervention Impact Simulation</span>
+              <span className="text-[10px] text-[#8E9BAE]">Avoided Loss Analysis</span>
             </div>
-            <div className="grid grid-cols-2 gap-3 text-[11px]">
-              <div className="p-2.5 rounded bg-slate-900/90 border border-red-900/40">
-                <div className="text-red-400 font-bold mb-1">NO INTERVENTION:</div>
-                <div className="text-slate-300 text-[10.5px] font-sans">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 text-[11px]">
+              <div className="p-2.5 rounded bg-[#14181D] border border-[rgba(239,68,68,0.25)] space-y-1">
+                <div className="text-[#F87171] font-semibold text-[10.5px]">WITHOUT INTERVENTION:</div>
+                <p className="text-[#8E9BAE] text-[10.5px] font-sans">
                   {result.impactAssessment.agricultureCropRisk}
-                </div>
+                </p>
               </div>
-              <div className="p-2.5 rounded bg-slate-900/90 border border-emerald-900/40">
-                <div className="text-emerald-400 font-bold mb-1">WITH RECOMMENDED ACTION:</div>
-                <div className="text-slate-300 text-[10.5px] font-sans">
+              <div className="p-2.5 rounded bg-[#14181D] border border-[rgba(16,185,129,0.25)] space-y-1">
+                <div className="text-[#10B981] font-semibold text-[10.5px]">WITH RECOMMENDED ACTION:</div>
+                <p className="text-[#8E9BAE] text-[10.5px] font-sans">
                   {result.impactAssessment.avoidedImpactWithIntervention}
-                </div>
+                </p>
               </div>
             </div>
           </div>

@@ -30,31 +30,31 @@ export function Navbar({ onTriggerDemoEvent, onResetDemo }: NavbarProps) {
 
   return (
     <>
-      <header className="sticky top-0 z-40 border-b border-slate-800 bg-slate-950/95 backdrop-blur px-4 py-2 font-mono">
+      <header className="sticky top-0 z-40 border-b border-[rgba(255,255,255,0.07)] bg-[#0B0D0F]/95 backdrop-blur px-4 py-2 font-mono">
         <div className="max-w-7xl mx-auto flex items-center justify-between gap-3">
           {/* Brand & Subtitle */}
           <div className="flex items-center gap-3 shrink-0">
             <Link href="/dashboard" className="flex items-center gap-2 group">
-              <div className="w-8 h-8 rounded bg-cyan-950 border border-cyan-500/40 flex items-center justify-center text-cyan-400 font-black tracking-tighter text-sm group-hover:border-cyan-400 transition-colors shadow-sm">
+              <div className="w-7 h-7 rounded bg-[#15191F] border border-[#06B6D4]/40 flex items-center justify-center text-[#06B6D4] font-black tracking-tighter text-xs group-hover:border-[#06B6D4] transition-colors shadow-sm">
                 A//G
               </div>
               <div>
-                <div className="flex items-center gap-1.5">
-                  <span className="font-extrabold tracking-wider text-slate-100 text-sm">AQUA//GUARD</span>
-                  <span className="text-[10px] px-1.5 py-0.2 rounded bg-cyan-950 border border-cyan-800/80 text-cyan-300 font-mono">v1.0</span>
+                <div className="flex items-center gap-1.5 leading-none">
+                  <span className="font-extrabold tracking-wider text-[#F1F4F8] text-sm">AQUA//GUARD</span>
+                  <span className="text-[9.5px] px-1.5 py-0.2 rounded bg-[rgba(255,255,255,0.06)] border border-[rgba(255,255,255,0.08)] text-[#8E9BAE] font-mono">v1.0</span>
                 </div>
-                <p className="text-[10px] text-slate-400 hidden md:block">Environmental Intelligence System</p>
+                <p className="text-[10px] text-[#5C6777] hidden md:block mt-0.5">Environmental Intelligence</p>
               </div>
             </Link>
 
             {/* Region & Telemetry Freshness */}
-            <div className="hidden xl:flex items-center gap-2 px-2.5 py-1 rounded bg-slate-900 border border-slate-800 text-[11px] text-slate-300">
-              <MapPin className="w-3.5 h-3.5 text-cyan-400 shrink-0" />
-              <span>Kenya • Juja / Kiambu Catchment</span>
-              <span className="text-slate-600">|</span>
-              <span className="inline-flex items-center gap-1 text-[10px] text-emerald-400">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-                OBSERVED · 1 min ago
+            <div className="hidden xl:flex items-center gap-2 px-2.5 py-1 rounded bg-[#14181D] border border-[rgba(255,255,255,0.06)] text-[11px] text-[#8E9BAE]">
+              <MapPin className="w-3.5 h-3.5 text-[#06B6D4] shrink-0" />
+              <span className="text-[#F1F4F8]">Kenya • Juja Catchment</span>
+              <span className="text-[#5C6777]">|</span>
+              <span className="inline-flex items-center gap-1 text-[10px] text-[#10B981]">
+                <span className="w-1.5 h-1.5 rounded-full bg-[#10B981] animate-pulse"></span>
+                OBSERVED · 1m ago
               </span>
             </div>
           </div>
@@ -62,65 +62,65 @@ export function Navbar({ onTriggerDemoEvent, onResetDemo }: NavbarProps) {
           {/* Quick Command Palette Launcher */}
           <button
             onClick={() => setCommandPaletteOpen(true)}
-            className="flex items-center gap-2 px-2.5 sm:px-3 py-1.5 rounded-lg bg-slate-900/80 hover:bg-slate-900 border border-slate-800 hover:border-slate-700 text-slate-400 hover:text-slate-200 text-xs transition-colors cursor-pointer w-auto sm:w-48 md:w-64 justify-between"
+            className="flex items-center gap-2 px-2.5 sm:px-3 py-1.5 rounded bg-[#14181D] hover:bg-[#1A2027] border border-[rgba(255,255,255,0.08)] hover:border-[rgba(255,255,255,0.14)] text-[#8E9BAE] hover:text-[#F1F4F8] text-xs transition-colors cursor-pointer w-auto sm:w-48 md:w-60 justify-between"
             aria-label="Search signals and stations"
           >
             <div className="flex items-center gap-2">
-              <Search className="w-3.5 h-3.5 text-slate-400" />
+              <Search className="w-3.5 h-3.5 text-[#8E9BAE]" />
               <span className="text-[11px] hidden sm:inline">Search signals, stations...</span>
             </div>
-            <kbd className="text-[10px] px-1.5 py-0.5 rounded bg-slate-950 border border-slate-800 text-slate-400 hidden sm:inline">⌘K</kbd>
+            <kbd className="text-[10px] px-1.5 py-0.5 rounded bg-[#0E1115] border border-[rgba(255,255,255,0.08)] text-[#5C6777] hidden sm:inline">⌘K</kbd>
           </button>
 
           {/* Controls, Mode & Actions */}
           <div className="flex items-center gap-2 shrink-0">
             {/* Demo Simulation Controls */}
-            <div className="flex items-center gap-1 bg-slate-900 border border-slate-800 p-0.5 rounded-md">
+            <div className="flex items-center gap-1 bg-[#14181D] border border-[rgba(255,255,255,0.07)] p-0.5 rounded">
               <button
                 onClick={handleRunEvent}
                 disabled={isDemoRunning}
-                className="flex items-center gap-1.5 px-2.5 py-1 rounded bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/30 text-amber-300 text-xs font-semibold transition-all cursor-pointer disabled:opacity-50"
+                className="flex items-center gap-1.5 px-2 py-1 rounded bg-[rgba(245,158,11,0.12)] hover:bg-[rgba(245,158,11,0.2)] border border-[rgba(245,158,11,0.3)] text-[#FBBF24] text-xs font-semibold transition-all cursor-pointer disabled:opacity-50"
                 title="Trigger deterministic Compound Water Stress demo sequence"
               >
-                <Zap className={`w-3.5 h-3.5 ${isDemoRunning ? 'animate-bounce text-amber-400' : ''}`} />
-                <span className="hidden sm:inline">SIMULATE EVENT</span>
+                <Zap className={`w-3.5 h-3.5 ${isDemoRunning ? 'animate-bounce text-[#FBBF24]' : ''}`} />
+                <span className="hidden sm:inline text-[11px]">SIMULATE EVENT</span>
               </button>
               <button
                 onClick={onResetDemo}
-                className="flex items-center gap-1 px-2 py-1 rounded hover:bg-slate-800 text-slate-400 hover:text-slate-200 text-xs transition-colors cursor-pointer"
+                className="flex items-center gap-1 px-1.5 py-1 rounded hover:bg-[#1F2630] text-[#8E9BAE] hover:text-[#F1F4F8] text-xs transition-colors cursor-pointer"
                 title="Reset demo parameters"
               >
                 <RotateCcw className="w-3 h-3" />
-                <span className="hidden sm:inline">RESET</span>
+                <span className="hidden sm:inline text-[11px]">RESET</span>
               </button>
             </div>
 
             {/* Notifications / Alert Center Link */}
             <Link
               href="/alerts"
-              className="p-1.5 rounded bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-300 hover:text-white transition-colors relative"
+              className="p-1.5 rounded bg-[#14181D] hover:bg-[#1A2027] border border-[rgba(255,255,255,0.07)] text-[#8E9BAE] hover:text-[#F1F4F8] transition-colors relative"
               title="Alert Center"
             >
-              <Bell className="w-4 h-4 text-slate-300" />
-              <span className="absolute top-1 right-1 w-1.5 h-1.5 rounded-full bg-red-400 animate-ping"></span>
+              <Bell className="w-3.5 h-3.5" />
+              <span className="absolute top-1 right-1 w-1.5 h-1.5 rounded-full bg-[#EF4444] animate-ping"></span>
             </Link>
 
             {/* Settings Link */}
             <Link
               href="/settings"
-              className="p-1.5 rounded bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-300 hover:text-white transition-colors"
+              className="p-1.5 rounded bg-[#14181D] hover:bg-[#1A2027] border border-[rgba(255,255,255,0.07)] text-[#8E9BAE] hover:text-[#F1F4F8] transition-colors"
               title="Operational Settings & API Mode"
             >
-              <SlidersHorizontal className="w-4 h-4 text-slate-300" />
+              <SlidersHorizontal className="w-3.5 h-3.5" />
             </Link>
 
             {/* Guardian AI Copilot */}
             <Link
               href="/copilot"
-              className="flex items-center gap-1.5 px-2.5 py-1.5 rounded bg-cyan-600 hover:bg-cyan-500 text-white text-xs font-bold transition-all shadow-sm shadow-cyan-950"
+              className="flex items-center gap-1.5 px-2.5 py-1 rounded bg-[#0284C7] hover:bg-[#0369A1] text-white text-xs font-semibold transition-all shadow-sm"
             >
               <ShieldCheck className="w-3.5 h-3.5" />
-              <span>GUARDIAN</span>
+              <span className="text-[11px]">GUARDIAN</span>
             </Link>
           </div>
         </div>

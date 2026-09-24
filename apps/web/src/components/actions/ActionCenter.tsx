@@ -2,7 +2,8 @@
 
 import React, { useState } from 'react';
 import { ActionRecommendation } from '@aquaguard/shared-types';
-import { CheckCircle2, Check } from 'lucide-react';
+import { CheckCircle2, Check, ArrowRight, ShieldCheck, ChevronDown, ChevronUp } from 'lucide-react';
+import { toast } from 'sonner';
 
 interface ActionCenterProps {
   actions: ActionRecommendation[];
@@ -15,78 +16,79 @@ export function ActionCenter({ actions, className = '' }: ActionCenterProps) {
 
   const toggleStatus = (id: string) => {
     setActiveActions((prev) =>
-      prev.map((act) =>
-        act.id === id
-          ? {
-              ...act,
-              status: act.status === 'EXECUTED' ? 'PENDING' : 'EXECUTED'
-            }
-          : act
-      )
+      prev.map((act) => {
+        if (act.id === id) {
+          const newStatus = act.status === 'EXECUTED' ? 'PENDING' : 'EXECUTED';
+          if (newStatus === 'EXECUTED') {
+            toast.success(`Action marked executed: ${act.title}`);
+          }
+          return { ...act, status: newStatus };
+        }
+        return act;
+      })
     );
   };
 
   const urgencies = ['IMMEDIATE', 'NEXT 24 HOURS', 'NEXT 7 DAYS', 'MONITOR'] as const;
 
-  const urgencyColors = {
-    IMMEDIATE: {
-      badge: 'bg-red-950/80 text-red-300 border-red-800/80',
-      dot: 'bg-red-500'
-    },
-    'NEXT 24 HOURS': {
-      badge: 'bg-amber-950/80 text-amber-300 border-amber-800/80',
-      dot: 'bg-amber-500'
-    },
-    'NEXT 7 DAYS': {
-      badge: 'bg-blue-950/80 text-blue-300 border-blue-800/80',
-      dot: 'bg-blue-500'
-    },
-    MONITOR: {
-      badge: 'bg-slate-900 text-slate-400 border-slate-800',
-      dot: 'bg-slate-500'
-    }
+  const urgencyPillStyles = {
+    IMMEDIATE: 'bg-[rgba(239,68,68,0.15)] text-[#F87171] border-[rgba(239,68,68,0.3)]',
+    'NEXT 24 HOURS': 'bg-[rgba(245,158,11,0.15)] text-[#FBBF24] border-[rgba(245,158,11,0.3)]',
+    'NEXT 7 DAYS': 'bg-[rgba(2,132,199,0.15)] text-[#38BDF8] border-[rgba(2,132,199,0.3)]',
+    MONITOR: 'bg-[rgba(255,255,255,0.06)] text-[#8E9BAE] border-[rgba(255,255,255,0.08)]'
   };
 
   return (
-    <div className={`space-y-6 font-mono ${className}`}>
+    <div className={`space-y-5 font-mono text-xs ${className}`}>
       {/* Header */}
-      <div className="flex flex-wrap items-center justify-between gap-3 p-4 rounded-lg border border-slate-800 bg-slate-900/60">
+      <div className="flex flex-wrap items-center justify-between gap-3 p-3.5 rounded border border-[rgba(255,255,255,0.08)] bg-[#111418]">
         <div>
-          <h2 className="text-base font-extrabold uppercase tracking-wider text-slate-100 flex items-center gap-2">
-            <CheckCircle2 className="w-5 h-5 text-cyan-400" />
-            <span>Environmental Decision Support Engine</span>
-          </h2>
-          <p className="text-xs text-slate-400 mt-1 font-sans">
-            Concrete, prioritized interventions derived from Conduit observations and verified physical models.
+          <h1 className="text-sm font-bold uppercase tracking-wider text-[#F1F4F8] flex items-center gap-2">
+            <CheckCircle2 className="w-4 h-4 text-[#06B6D4]" />
+            <span>Environmental Decision & Action Engine</span>
+          </h1>
+          <p className="text-xs text-[#8E9BAE] mt-0.5 font-sans">
+            Priority interventions derived from physical Conduit observations, soil moisture deficit, and calibrated risk thresholds.
           </p>
         </div>
         <div className="flex items-center gap-2 text-xs">
-          <span className="text-slate-400">Total Interventions:</span>
-          <span className="px-2 py-0.5 rounded bg-cyan-950 text-cyan-300 border border-cyan-800 font-bold">
-            {activeActions.length} Actions
+          <span className="text-[#8E9BAE]">Active Queue:</span>
+          <span className="px-2 py-0.5 rounded bg-[rgba(255,255,255,0.06)] text-[#F1F4F8] border border-[rgba(255,255,255,0.08)] font-semibold">
+            {activeActions.filter((a) => a.status !== 'EXECUTED').length} Pending
           </span>
         </div>
       </div>
 
-      {/* Urgency Columns / Groupings (Requirement #80) */}
-      <div className="space-y-6">
+      {/* Decision Workflow Banner: RISK -> EVIDENCE -> ACTION -> OUTCOME */}
+      <div className="p-3 rounded border border-[rgba(255,255,255,0.06)] bg-[#15191F] flex flex-wrap items-center justify-between gap-3 text-[11px] text-[#8E9BAE]">
+        <div className="flex items-center gap-2">
+          <span className="text-[#F87171] font-bold">1. ASSESSED RISK</span>
+          <ArrowRight className="w-3 h-3 text-[#5C6777]" />
+          <span className="text-[#FBBF24] font-bold">2. SENSOR EVIDENCE</span>
+          <ArrowRight className="w-3 h-3 text-[#5C6777]" />
+          <span className="text-[#06B6D4] font-bold">3. INTERVENTION</span>
+          <ArrowRight className="w-3 h-3 text-[#5C6777]" />
+          <span className="text-[#10B981] font-bold">4. AVOIDED LOSS</span>
+        </div>
+        <span className="text-[10px] text-[#5C6777]">Strict Causal Provenance</span>
+      </div>
+
+      {/* Urgency Columns */}
+      <div className="space-y-5">
         {urgencies.map((urgency) => {
           const group = activeActions.filter((a) => a.urgency === urgency);
           if (group.length === 0) return null;
 
-          const col = urgencyColors[urgency];
-
           return (
-            <div key={urgency} className="space-y-3">
-              <div className="flex items-center gap-2">
-                <span className={`w-2 h-2 rounded-full ${col.dot}`} />
-                <span className="text-xs font-bold uppercase tracking-wider text-slate-300">
+            <div key={urgency} className="space-y-2.5">
+              <div className="flex items-center gap-2 px-1">
+                <span className="text-xs font-bold uppercase tracking-wider text-[#F1F4F8]">
                   {urgency} INTERVENTIONS
                 </span>
-                <span className="text-[10px] text-slate-400">({group.length})</span>
+                <span className="text-[10px] text-[#5C6777]">({group.length})</span>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
                 {group.map((act) => {
                   const isExpanded = expandedId === act.id;
                   const isDone = act.status === 'EXECUTED';
@@ -94,29 +96,30 @@ export function ActionCenter({ actions, className = '' }: ActionCenterProps) {
                   return (
                     <div
                       key={act.id}
-                      className={`p-4 rounded-lg border transition-all flex flex-col justify-between ${
+                      className={`p-4 rounded border transition-all flex flex-col justify-between ${
                         isDone
-                          ? 'border-emerald-900/60 bg-emerald-950/20 opacity-80'
-                          : 'border-slate-800 bg-slate-900/70 hover:border-slate-700'
+                          ? 'border-[rgba(16,185,129,0.3)] bg-[rgba(16,185,129,0.04)] opacity-75'
+                          : 'border-[rgba(255,255,255,0.08)] bg-[#111418] hover:border-[rgba(255,255,255,0.14)]'
                       }`}
                     >
                       <div>
                         {/* Card Header */}
                         <div className="flex items-start justify-between gap-2">
                           <div className="flex items-center gap-2">
-                            <span className={`text-[10px] px-2 py-0.5 rounded font-bold border ${col.badge}`}>
+                            <span className={`text-[9.5px] px-1.5 py-0.2 rounded font-semibold border ${urgencyPillStyles[urgency]}`}>
                               {act.urgency}
                             </span>
-                            <span className="text-[10px] text-slate-400 font-mono">
+                            <span className="text-[10px] text-[#5C6777]">
                               Sector: {act.targetSector}
                             </span>
                           </div>
+
                           <button
                             onClick={() => toggleStatus(act.id)}
-                            className={`flex items-center gap-1 text-[11px] px-2 py-0.5 rounded border transition-colors cursor-pointer ${
+                            className={`flex items-center gap-1 text-[10.5px] px-2 py-0.5 rounded border transition-colors cursor-pointer ${
                               isDone
-                                ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40'
-                                : 'bg-slate-800 text-slate-300 hover:bg-slate-700 border-slate-700'
+                                ? 'bg-[rgba(16,185,129,0.15)] text-[#10B981] border-[rgba(16,185,129,0.3)] font-semibold'
+                                : 'bg-[#15191F] text-[#8E9BAE] hover:text-[#F1F4F8] border-[rgba(255,255,255,0.08)]'
                             }`}
                           >
                             <Check className="w-3 h-3" />
@@ -125,56 +128,57 @@ export function ActionCenter({ actions, className = '' }: ActionCenterProps) {
                         </div>
 
                         {/* Title */}
-                        <h4 className={`text-sm font-bold text-slate-100 mt-2.5 leading-snug ${isDone ? 'line-through text-slate-400' : ''}`}>
+                        <h2 className={`text-sm font-semibold text-[#F1F4F8] mt-2 leading-snug ${isDone ? 'line-through text-[#8E9BAE]' : ''}`}>
                           {act.title}
-                        </h4>
+                        </h2>
 
                         {/* Reason */}
-                        <p className="text-xs text-slate-300 mt-2 font-sans leading-relaxed">
+                        <p className="text-xs text-[#8E9BAE] mt-1.5 font-sans leading-relaxed">
                           {act.reason}
                         </p>
                       </div>
 
-                      {/* Action Traceability Drawer (Requirement #81) */}
-                      <div className="mt-3.5 pt-3 border-t border-slate-800/80">
+                      {/* Evidence & Traceability Drawer */}
+                      <div className="mt-3 pt-2.5 border-t border-[rgba(255,255,255,0.05)]">
                         <button
                           onClick={() => setExpandedId(isExpanded ? null : act.id)}
-                          className="text-[11px] text-cyan-400 hover:text-cyan-300 flex items-center justify-between w-full cursor-pointer"
+                          className="text-[11px] text-[#06B6D4] hover:underline flex items-center justify-between w-full cursor-pointer"
                         >
-                          <span className="font-bold">
-                            {isExpanded ? 'Hide Traceability & Evidence' : 'Why this action? (Evidence Trace)'}
+                          <span className="font-semibold flex items-center gap-1">
+                            <ShieldCheck className="w-3.5 h-3.5" />
+                            {isExpanded ? 'Hide Evidence & Expected Outcome' : 'Why this action? (Evidence Trace)'}
                           </span>
-                          <span>{isExpanded ? '▲' : '▼'}</span>
+                          {isExpanded ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
                         </button>
 
                         {isExpanded && (
-                          <div className="mt-2.5 p-3 rounded bg-slate-950 border border-slate-800 text-xs space-y-2 animate-in fade-in">
+                          <div className="mt-2 p-2.5 rounded bg-[#15191F] border border-[rgba(255,255,255,0.06)] space-y-2 animate-in fade-in">
                             <div>
-                              <span className="text-[10px] text-slate-400 uppercase font-bold block mb-1">
-                                Verified Sensor Evidence:
+                              <span className="text-[10px] text-[#8E9BAE] uppercase font-semibold block mb-1">
+                                Verified Physical Evidence:
                               </span>
                               {act.evidence.map((ev, i) => (
-                                <div key={i} className="text-slate-300 text-[11px] flex items-start gap-1.5 font-sans">
-                                  <span className="text-cyan-400">•</span>
+                                <div key={i} className="text-[#F1F4F8] text-[10.5px] flex items-start gap-1.5 font-sans">
+                                  <span className="text-[#06B6D4]">•</span>
                                   <span>{ev}</span>
                                 </div>
                               ))}
                             </div>
 
-                            <div className="pt-2 border-t border-slate-800/80">
-                              <span className="text-[10px] text-slate-400 uppercase font-bold block mb-0.5">
-                                Expected Effect:
+                            <div className="pt-1.5 border-t border-[rgba(255,255,255,0.05)]">
+                              <span className="text-[10px] text-[#8E9BAE] uppercase font-semibold block mb-0.5">
+                                Projected Outcome:
                               </span>
-                              <p className="text-emerald-300 text-[11px] font-sans">
+                              <p className="text-[#10B981] text-[10.5px] font-sans">
                                 {act.expectedEffect}
                               </p>
                             </div>
 
-                            <div className="pt-2 border-t border-slate-800/80">
-                              <span className="text-[10px] text-slate-400 uppercase font-bold block mb-0.5">
-                                Modelled Avoided Loss:
+                            <div className="pt-1.5 border-t border-[rgba(255,255,255,0.05)]">
+                              <span className="text-[10px] text-[#8E9BAE] uppercase font-semibold block mb-0.5">
+                                Avoided Harvest Loss:
                               </span>
-                              <p className="text-amber-300 text-[11px] font-sans font-bold">
+                              <p className="text-[#FBBF24] text-[10.5px] font-bold">
                                 {act.avoidedLossEstimate}
                               </p>
                             </div>
