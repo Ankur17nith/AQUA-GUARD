@@ -1,10 +1,28 @@
 'use client';
 
 import React, { useEffect, useRef, useState } from 'react';
-import * as maplibregl from 'maplibre-gl';
+import { Map, NavigationControl, Marker, setWorkerUrl } from 'maplibre-gl';
 import { StationMetadata } from '@aquaguard/shared-types';
-import { Play, Pause, RotateCcw, MapPin } from 'lucide-react';
+import { Play, Pause, RotateCcw, MapPin, AlertTriangle } from 'lucide-react';
 import { RiskBadge } from '@/components/ui/RiskBadge';
+
+// Explicitly set worker URL for Next.js / Turbopack ESM worker resolution
+if (typeof window !== 'undefined') {
+  setWorkerUrl('/maplibre/maplibre-gl-worker.mjs');
+}
+
+function isWebGLSupported(): boolean {
+  if (typeof window === 'undefined') return true;
+  try {
+    const canvas = document.createElement('canvas');
+    return Boolean(
+      window.WebGLRenderingContext &&
+        (canvas.getContext('webgl') || canvas.getContext('experimental-webgl'))
+    );
+  } catch {
+    return false;
+  }
+}
 
 interface MapContainerProps {
   stations: StationMetadata[];
@@ -20,8 +38,14 @@ export function MapContainer({
   className = ''
 }: MapContainerProps) {
   const mapContainer = useRef<HTMLDivElement>(null);
-  const map = useRef<maplibregl.Map | null>(null);
-  const markersRef = useRef<maplibregl.Marker[]>([]);
+  const map = useRef<Map | null>(null);
+  const markersRef = useRef<Marker[]>([]);
+  const [mapError, setMapError] = useState<string | null>(() => {
+    if (typeof window !== 'undefined' && !isWebGLSupported()) {
+      return 'Hardware acceleration or WebGL is unavailable in this environment. Showing simulated coordinate topology.';
+    }
+    return null;
+  });
 
   // Temporal Timeline Control (PAST <- NOW -> FORECAST)
   const timelineSteps = ['-48h', '-24h', '-12h', 'NOW', '+24h', '+3d', '+7d', '+14d'];
@@ -32,48 +56,62 @@ export function MapContainer({
   const selectedStation = stations.find((s) => s.id === selectedStationId) || stations[0];
 
   useEffect(() => {
-    if (!mapContainer.current) return;
+    if (!mapContainer.current || mapError) return;
     if (map.current) return; // initialize once
 
-    // Kenya center coords: Lat ~0.2, Lon ~37.5
-    const jkuatCoords: [number, number] = [37.014528, -1.099736];
+    // Ensure worker URL is set prior to Map construction
+    setWorkerUrl('/maplibre/maplibre-gl-worker.mjs');
 
-    map.current = new maplibregl.Map({
-      container: mapContainer.current,
-      style: {
-        version: 8,
-        sources: {
-          osm: {
-            type: 'raster',
-            tiles: [
-              'https://a.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png',
-              'https://b.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png'
-            ],
-            tileSize: 256,
-            attribution: '© OpenStreetMap contributors, © CARTO'
-          }
+    try {
+      // Kenya center coords: Lat ~0.2, Lon ~37.5
+      const jkuatCoords: [number, number] = [37.014528, -1.099736];
+
+      const instance = new Map({
+        container: mapContainer.current,
+        style: {
+          version: 8,
+          sources: {
+            osm: {
+              type: 'raster',
+              tiles: [
+                'https://a.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png',
+                'https://b.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png'
+              ],
+              tileSize: 256,
+              attribution: '© OpenStreetMap contributors, © CARTO'
+            }
+          },
+          layers: [
+            {
+              id: 'osm-tiles',
+              type: 'raster',
+              source: 'osm',
+              minzoom: 0,
+              maxzoom: 19
+            }
+          ]
         },
-        layers: [
-          {
-            id: 'osm-tiles',
-            type: 'raster',
-            source: 'osm',
-            minzoom: 0,
-            maxzoom: 19
-          }
-        ]
-      },
-      center: jkuatCoords,
-      zoom: 6.8
-    });
+        center: jkuatCoords,
+        zoom: 6.8
+      });
 
-    map.current.addControl(new maplibregl.NavigationControl({ showCompass: true }), 'top-right');
+      instance.addControl(new NavigationControl({ showCompass: true }), 'top-right');
+      map.current = instance;
+    } catch (err: unknown) {
+      const errMsg = err instanceof Error ? err.message : 'Failed to initialize MapLibre GL';
+      console.warn('MapLibre GL initialization notice:', errMsg);
+      queueMicrotask(() => {
+        setMapError(errMsg);
+      });
+    }
 
     return () => {
-      map.current?.remove();
-      map.current = null;
+      if (map.current) {
+        map.current.remove();
+        map.current = null;
+      }
     };
-  }, []);
+  }, [mapError]);
 
   // Update Markers
   useEffect(() => {
@@ -121,7 +159,7 @@ export function MapContainer({
         map.current?.flyTo({ center: station.coordinates, zoom: 8.5, speed: 1.2 });
       });
 
-      const marker = new maplibregl.Marker({ element: el })
+      const marker = new Marker({ element: el })
         .setLngLat(station.coordinates)
         .addTo(map.current!);
 
@@ -171,7 +209,37 @@ export function MapContainer({
       </div>
 
       {/* Main Map Viewport */}
-      <div ref={mapContainer} className="w-full h-[480px] lg:h-[540px] relative" />
+      <div ref={mapContainer} className="w-full h-[480px] lg:h-[540px] relative">
+        {mapError && (
+          <div className="absolute inset-0 flex flex-col items-center justify-center p-6 bg-slate-950/95 text-center z-10 font-mono">
+            <div className="p-3 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 mb-3">
+              <AlertTriangle className="w-6 h-6" />
+            </div>
+            <h3 className="text-sm font-bold text-slate-200 uppercase tracking-wider mb-1">
+              Geospatial Acceleration Notice
+            </h3>
+            <p className="text-xs text-slate-400 max-w-md mb-4 font-sans">
+              {mapError}
+            </p>
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 w-full max-w-lg text-left text-xs">
+              {stations.slice(0, 6).map((st) => (
+                <button
+                  key={st.id}
+                  onClick={() => onSelectStation?.(st)}
+                  className={`p-2 rounded border transition-colors cursor-pointer ${
+                    st.id === selectedStationId
+                      ? 'border-cyan-500/60 bg-cyan-950/40 text-cyan-300 font-bold'
+                      : 'border-slate-800 bg-slate-900/60 text-slate-300 hover:border-slate-700'
+                  }`}
+                >
+                  <div className="text-[11px] truncate">{st.name}</div>
+                  <div className="text-[9px] text-slate-500">{st.county}</div>
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
 
       {/* Selected Location Intelligence Overlay Drawer (Requirement #31) */}
       {selectedStation && (

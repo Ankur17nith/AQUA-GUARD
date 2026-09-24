@@ -12,6 +12,7 @@
     "lint:web": "npm --prefix apps/web run lint",
     "test:api": ".venv/bin/pytest apps/api/tests",
     "dev:api": ".venv/bin/uvicorn apps.api.main:app --reload --port 8000",
+    "copy:worker": "node scripts/copy-maplibre-worker.mjs",
     "seed": ".venv/bin/python3 scripts/seed.py",
     "test": "npm --prefix apps/web run build && .venv/bin/pytest apps/api/tests"
   },

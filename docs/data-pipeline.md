@@ -3,7 +3,7 @@
 ## 1. Primary Data Source: Conduit@Empathy (3D-PAWS UCAR)
 The primary data source is the **Conduit@Empathy** weather station installed at Jomo Kenyatta University of Agriculture and Technology (JKUAT) in Juja, Kenya.
 * **Portal**: `https://conduit.jhubafrica.com/`
-* **Underlying Telemetry API**: `https://3d-fewsnet.icdp.ucar.edu/api/v1/data/61.geojson?email=3dpaws@meteo.go.ke&api_key=71VcHDXG-zo1ezcgxAts`
+* **Underlying Telemetry API**: `https://3d-fewsnet.icdp.ucar.edu/api/v1/data/61.geojson?email=3dpaws@meteo.go.ke&api_key=YOUR_CONDUIT_API_KEY`
 * **Sampling Rate**: Continuous 1-minute observational cadence.
 * **Coordinates**: Latitude -1.099736° S, Longitude 37.014528° E, Elevation 1,523 meters.
 

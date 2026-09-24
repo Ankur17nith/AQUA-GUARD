@@ -37,7 +37,9 @@ export function Sidebar() {
   const pathname = usePathname();
 
   return (
-    <aside className="w-64 border-r border-slate-800 bg-slate-950/60 flex flex-col shrink-0 min-h-[calc(100vh-53px)]">
+    <>
+      {/* Desktop Sidebar */}
+      <aside className="hidden md:flex w-64 border-r border-slate-800 bg-slate-950/60 flex-col shrink-0 min-h-[calc(100vh-53px)]">
       {/* Navigation Group */}
       <div className="p-3">
         <div className="text-[10px] font-mono uppercase tracking-wider text-slate-400 px-3 py-1.5 font-bold">
@@ -107,5 +109,32 @@ export function Sidebar() {
         </div>
       </div>
     </aside>
+
+    {/* Mobile Bottom Navigation Bar */}
+    <nav className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-slate-950/95 backdrop-blur border-t border-slate-800 px-2 py-1.5 flex items-center justify-around">
+      {[
+        { href: '/dashboard', label: 'Command', icon: LayoutDashboard },
+        { href: '/map', label: 'Map', icon: MapPin },
+        { href: '/risk', label: 'Risk', icon: AlertTriangle },
+        { href: '/scenarios', label: 'Twin', icon: Cpu },
+        { href: '/actions', label: 'Actions', icon: CheckCircle2 },
+      ].map((tab) => {
+        const Icon = tab.icon;
+        const isActive = pathname === tab.href || (tab.href === '/dashboard' && pathname === '/');
+        return (
+          <Link
+            key={tab.href}
+            href={tab.href}
+            className={`flex flex-col items-center gap-0.5 py-1 px-2.5 rounded text-[10px] font-mono transition-colors ${
+              isActive ? 'text-cyan-400 font-bold' : 'text-slate-400 hover:text-slate-200'
+            }`}
+          >
+            <Icon className="w-4 h-4" />
+            <span>{tab.label}</span>
+          </Link>
+        );
+      })}
+    </nav>
+  </>
   );
 }

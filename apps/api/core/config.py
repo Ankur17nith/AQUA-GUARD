@@ -15,7 +15,7 @@ class Settings:
     
     # Conduit Configuration (3D-PAWS UCAR)
     CONDUIT_API_URL: str = os.getenv("CONDUIT_API_URL", "https://3d-fewsnet.icdp.ucar.edu/api/v1/data/61.geojson")
-    CONDUIT_API_KEY: str = os.getenv("CONDUIT_API_KEY", "71VcHDXG-zo1ezcgxAts")
+    CONDUIT_API_KEY: str = os.getenv("CONDUIT_API_KEY", "")
     CONDUIT_API_EMAIL: str = os.getenv("CONDUIT_API_EMAIL", "3dpaws@meteo.go.ke")
     CONDUIT_PRIMARY_STATION_ID: int = int(os.getenv("CONDUIT_STATION_ID", "61"))
     

@@ -62,13 +62,14 @@ export function Navbar({ onTriggerDemoEvent, onResetDemo }: NavbarProps) {
           {/* Quick Command Palette Launcher */}
           <button
             onClick={() => setCommandPaletteOpen(true)}
-            className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-lg bg-slate-900/80 hover:bg-slate-900 border border-slate-800 hover:border-slate-700 text-slate-400 hover:text-slate-200 text-xs transition-colors cursor-pointer w-48 md:w-64 justify-between"
+            className="flex items-center gap-2 px-2.5 sm:px-3 py-1.5 rounded-lg bg-slate-900/80 hover:bg-slate-900 border border-slate-800 hover:border-slate-700 text-slate-400 hover:text-slate-200 text-xs transition-colors cursor-pointer w-auto sm:w-48 md:w-64 justify-between"
+            aria-label="Search signals and stations"
           >
             <div className="flex items-center gap-2">
               <Search className="w-3.5 h-3.5 text-slate-400" />
-              <span className="text-[11px]">Search signals, stations...</span>
+              <span className="text-[11px] hidden sm:inline">Search signals, stations...</span>
             </div>
-            <kbd className="text-[10px] px-1.5 py-0.5 rounded bg-slate-950 border border-slate-800 text-slate-400">⌘K</kbd>
+            <kbd className="text-[10px] px-1.5 py-0.5 rounded bg-slate-950 border border-slate-800 text-slate-400 hidden sm:inline">⌘K</kbd>
           </button>
 
           {/* Controls, Mode & Actions */}

@@ -82,7 +82,7 @@ Avoided 25–35% Localized Harvest Loss Across Smallholder Farming Communities
 
 ## 3. Real Conduit@Empathy Integration
 
-AQUA//GUARD does not use synthetic placeholders for primary sensors. It connects directly to the **Conduit@Empathy** hub installed at JKUAT in Juja, Kenya (`https://3d-fewsnet.icdp.ucar.edu/api/v1/data/61.geojson?email=3dpaws@meteo.go.ke&api_key=71VcHDXG-zo1ezcgxAts`).
+AQUA//GUARD does not use synthetic placeholders for primary sensors. It connects directly to the **Conduit@Empathy** hub installed at JKUAT in Juja, Kenya (`https://3d-fewsnet.icdp.ucar.edu/api/v1/data/61.geojson?email=3dpaws@meteo.go.ke&api_key=YOUR_CONDUIT_API_KEY`).
 
 ### Instrumented Channels:
 * **Precipitation**: Dual tipping-bucket rain gauges (`rg1`, `rg2`, `rgt`, `rgp`).

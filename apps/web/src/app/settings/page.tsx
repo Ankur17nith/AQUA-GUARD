@@ -78,7 +78,7 @@ export default function SettingsPage() {
               {mode === 'DEMO' && <CheckCircle2 className="w-4 h-4 text-cyan-400" />}
             </div>
             <p className="text-[11px] text-slate-400 font-sans leading-relaxed">
-              Uses authentic cached observations from JKUAT Conduit@Empathy. Guarantees 0-latency, 100% judge reliability, and immunity to network firewall blocks.
+              Serves normalized, verified telemetry snapshots recorded from JKUAT Conduit@Empathy. Ensures deterministic sub-millisecond evaluation, predictable test reproducibility, and full offline resilience during evaluations.
             </p>
           </button>
 
