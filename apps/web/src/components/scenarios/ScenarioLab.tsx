@@ -1,9 +1,10 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Cpu, Play, ShieldCheck } from 'lucide-react';
+import { Cpu, Play, ShieldCheck, TrendingUp } from 'lucide-react';
 import { ScenarioSimulationResult } from '@aquaguard/shared-types';
 import { api } from '@/lib/api';
+import { ScenarioComparisonChart } from '@/components/charts/ScenarioComparisonChart';
 
 export function ScenarioLab() {
   const [rainfallDelta, setRainfallDelta] = useState(-30);
@@ -305,6 +306,24 @@ export function ScenarioLab() {
                   <span className="text-red-400 font-bold">+{result.deltaMetrics.vegetationStressDelta}%</span>
                 </div>
               </div>
+            </div>
+
+            {/* Apache ECharts Baseline vs Scenario Comparison (Requirement #15) */}
+            <div className="mt-4 pt-4 border-t border-slate-800">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-[11px] font-bold uppercase text-slate-300">
+                  Visual Baseline vs Counterfactual Trajectory
+                </span>
+                <span className="text-[10px] text-amber-400 font-bold flex items-center gap-1">
+                  <TrendingUp className="w-3 h-3" />
+                  Risk increased by +{result.deltaMetrics.droughtRiskDelta} points under this scenario.
+                </span>
+              </div>
+              <ScenarioComparisonChart
+                currentMetrics={result.currentMetrics}
+                projectedMetrics={result.projectedMetrics}
+                height={220}
+              />
             </div>
           </div>
 

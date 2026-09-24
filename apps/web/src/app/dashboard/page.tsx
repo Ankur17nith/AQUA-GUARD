@@ -23,6 +23,7 @@ import {
   ExternalLink,
   Bell
 } from 'lucide-react';
+import { HeroEnvironmentalState } from '@/components/ui/HeroEnvironmentalState';
 
 export default function DashboardPage() {
   const [stationId, setStationId] = useState<number>(62);
@@ -97,7 +98,10 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      {/* 2. Top Risk & Health KPI Ribbon (Requirement #42) */}
+      {/* 2. Hero Environmental State Visualization (Requirement #8 & #12) */}
+      <HeroEnvironmentalState primaryRisk={risks[0]} stationName={currentStation.name} />
+
+      {/* 3. Top Risk & Health KPI Ribbon (Requirement #42) */}
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
         <div className="p-3.5 rounded-lg border border-red-900/50 bg-red-950/20 font-mono">
           <div className="text-[10px] text-red-300 uppercase font-bold flex justify-between">

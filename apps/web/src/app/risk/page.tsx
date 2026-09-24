@@ -10,7 +10,7 @@ import Link from 'next/link';
 
 export default function RiskPage() {
   const stationId = 62;
-  const [activeCategory, setActiveCategory] = useState<'DROUGHT' | 'WATER_STRESS' | 'HEAT' | 'FLOOD'>('DROUGHT');
+  const [activeCategory, setActiveCategory] = useState<'DROUGHT' | 'WATER_STRESS' | 'HEAT' | 'FLOOD' | 'VEGETATION' | 'COMPOUND'>('DROUGHT');
 
   const { data: risks = fallbackRisks } = useQuery({
     queryKey: ['risks', stationId],
@@ -40,7 +40,7 @@ export default function RiskPage() {
 
         {/* Category Tabs */}
         <div className="flex items-center gap-1 bg-slate-950 p-1 rounded-md border border-slate-800 text-xs">
-          {(['DROUGHT', 'WATER_STRESS', 'HEAT', 'FLOOD'] as const).map((cat) => (
+          {(['DROUGHT', 'WATER_STRESS', 'HEAT', 'FLOOD', 'VEGETATION', 'COMPOUND'] as const).map((cat) => (
             <button
               key={cat}
               onClick={() => setActiveCategory(cat)}

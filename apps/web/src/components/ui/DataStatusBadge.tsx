@@ -2,14 +2,14 @@ import React from 'react';
 import { DataStatus } from '@aquaguard/shared-types';
 
 interface DataStatusBadgeProps {
-  status: DataStatus;
+  status: DataStatus | 'DEMO';
   source?: string;
   timeAgo?: string;
   className?: string;
 }
 
 export function DataStatusBadge({ status, source = 'Conduit', timeAgo, className = '' }: DataStatusBadgeProps) {
-  const configs: Record<DataStatus, { label: string; bg: string; text: string; border: string }> = {
+  const configs: Record<DataStatus | 'DEMO', { label: string; bg: string; text: string; border: string }> = {
     OBSERVED: {
       label: 'OBSERVED',
       bg: 'bg-emerald-950/70',
@@ -45,10 +45,16 @@ export function DataStatusBadge({ status, source = 'Conduit', timeAgo, className
       bg: 'bg-slate-900',
       text: 'text-slate-400',
       border: 'border-slate-800'
+    },
+    DEMO: {
+      label: 'DEMO',
+      bg: 'bg-indigo-950/70',
+      text: 'text-indigo-400',
+      border: 'border-indigo-800/60'
     }
   };
 
-  const c = configs[status] || configs.OBSERVED;
+  const c = configs[status as keyof typeof configs] || configs.OBSERVED;
 
   return (
     <div className={`inline-flex items-center gap-1.5 text-[10px] font-mono px-2 py-0.5 rounded border ${c.bg} ${c.text} ${c.border} ${className}`}>

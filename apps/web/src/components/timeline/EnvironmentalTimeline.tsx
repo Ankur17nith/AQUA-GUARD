@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { CanonicalObservation, ForecastPoint } from '@aquaguard/shared-types';
+import { EnvironmentalEChart } from '@/components/charts/EnvironmentalEChart';
 
 interface EnvironmentalTimelineProps {
   observations?: CanonicalObservation[];
@@ -39,6 +40,15 @@ export function EnvironmentalTimeline({
             Demonstrating physical causality: Rainfall Deficit → Soil Desiccation → Thermal Evaporative Demand → Crop Stress → Risk Escalation.
           </p>
         </div>
+      </div>
+
+      {/* Apache ECharts Multi-Signal Interactive Series */}
+      <div className="mb-6 p-4 rounded-lg bg-slate-900/60 border border-slate-800">
+        <div className="text-xs font-bold uppercase text-slate-300 mb-2 flex items-center justify-between">
+          <span>Continuous Signal Correlation Overlay</span>
+          <span className="text-[10px] text-slate-400">Interactive: Zoom / Pan / Legend Toggle</span>
+        </div>
+        <EnvironmentalEChart height={280} />
       </div>
 
       {/* Synchronized Multi-Track Grid */}
